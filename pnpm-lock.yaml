@@ -27,6 +27,9 @@ devDependencies:
   '@rollup/plugin-node-resolve':
     specifier: ^13.0.6
     version: 13.0.6(rollup@2.60.0)
+  '@types/mocha':
+    specifier: ^10.0.1
+    version: 10.0.1
   '@typescript-eslint/eslint-plugin':
     specifier: ^5.48.0
     version: 5.48.0(@typescript-eslint/parser@5.48.0)(eslint@8.31.0)(typescript@4.5.2)
@@ -2303,6 +2306,10 @@ packages:
 
   /@types/mime@3.0.1:
     resolution: {integrity: sha512-Y4XFY5VJAuw0FgAqPNd6NNoV44jbq9Bz2L7Rh/J6jLTiHBSBJa9fxqQIvkIld4GsoDOcCbvzOUAbLPsSKKg+uA==}
+    dev: true
+
+  /@types/mocha@10.0.1:
+    resolution: {integrity: sha512-/fvYntiO1GeICvqbQ3doGDIP97vWmvFt83GKguJ6prmQM2iXZfFcq6YE8KteFyRtX2/h5Hf91BYvPodJKFYv5Q==}
     dev: true
 
   /@types/mocha@8.2.3:
