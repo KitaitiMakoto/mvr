@@ -1,81 +1,90 @@
-import { LitElement, html, css } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { LitElement, css, html } from 'lit';
+import { customElement, query } from 'lit/decorators.js';
 
-const logo = new URL('../../assets/open-wc-logo.svg', import.meta.url).href;
+import './mvr-board.js';
+import type {MvrBoard} from './mvr-board.js';
 
 @customElement('mvr-app')
 export class MvrApp extends LitElement {
-  @property({ type: String }) header = 'My app';
-
   static styles = css`
-    :host {
-      min-height: 100vh;
+    .controls {
+      position: sticky;
+      inset-block-start: 0;
+      z-index: 12;
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
+      background-color: #ededed;
+    }
+
+    .control-group {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .control {
+      display: flex;
       align-items: center;
-      justify-content: flex-start;
-      font-size: calc(10px + 2vmin);
-      color: #1a2b42;
-      max-width: 960px;
-      margin: 0 auto;
-      text-align: center;
-      background-color: var(--mvr-app-background-color);
-    }
-
-    main {
-      flex-grow: 1;
-    }
-
-    .logo {
-      margin-top: 36px;
-      animation: app-logo-spin infinite 20s linear;
-    }
-
-    @keyframes app-logo-spin {
-      from {
-        transform: rotate(0deg);
-      }
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .app-footer {
-      font-size: calc(12px + 0.5vmin);
-      align-items: center;
-    }
-
-    .app-footer a {
-      margin-left: 5px;
+      gap: 0.5rem;
     }
   `;
 
+  @query('#panel-width')
+  _$panelWidth!: HTMLInputElement;
+
+  @query('mvr-board')
+  _board?: MvrBoard;
+
   render() {
+    const params = new URL(window.location.href).searchParams;
+    const src = params.get('board');
+    if (! src) {
+      return html`<p>ボードが設定されていません。</p>`;
+    }
+
     return html`
-      <main>
-        <div class="logo"><img alt="open-wc logo" src=${logo} /></div>
-        <h1>${this.header}</h1>
-
-        <p>Edit <code>src/MvrApp.ts</code> and save to reload.</p>
-        <a
-          class="app-link"
-          href="https://open-wc.org/guides/developing-components/code-examples"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Code examples
-        </a>
-      </main>
-
-      <p class="app-footer">
-        🚽 Made with love by
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://github.com/open-wc"
-          >open-wc</a
-        >.
-      </p>
+      <div class="controls">
+        <div class="control-group">
+          <div class="control">
+            <button type="button" @click="${this.#handleAddText}">＋テキスト</button>
+          </div>
+          <div class="control">
+            <button type="button" @click="${this.#handleAddRow}">＋行</button>
+          </div>
+        </div>
+        <div class="control-group">
+          <div class="control">
+            <button type="button" @click="${this.#handleToggleTable}">一時置き場</button>
+          </div>
+        </div>
+        <div class="control-group">
+          <div class="control">
+            <label for="panel-width">パネル幅</label><input type="range" value="10" min="5" id="panel-width" @input="${this.#handlePanelWidthChange}">
+          </div>
+        </div>
+      </div>
+      <mvr-board src="${src}"></mvr-board>
     `;
+  }
+
+  #handlePanelWidthChange() {
+    this._board?.style.setProperty('--panel-width', `${this._$panelWidth.value}vw`);
+  }
+
+  #handleAddText() {
+    this._board?.addText();
+  }
+
+  #handleAddRow() {
+    this._board?.addRow();
+  }
+
+  #handleToggleTable() {
+    this._board?.toggleTable();
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'mvr-app': MvrApp;
   }
 }
