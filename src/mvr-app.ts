@@ -62,11 +62,6 @@ export class MvrApp extends LitElement {
               </sp-action-button>
             </sp-action-group>
             <sp-action-group>
-              <sp-action-button @click=${this.#handleToggleTable}>
-                <sp-icon-folder slot="icon"></sp-icon-folder>一時置き場
-              </sp-action-button>
-            </sp-action-group>
-            <sp-action-group>
               <sp-field-label>パネル幅</sp-field-label>
               <sp-slider id="panel-width" min="5" value="10" @input=${this.#handlePanelWidthChange} label-visibility="none"></sp-slider>
             </sp-action-group>
@@ -109,10 +104,6 @@ export class MvrApp extends LitElement {
 
   #handleAddRow() {
     this._board?.addRow();
-  }
-
-  #handleToggleTable() {
-    this._board?.toggleTable();
   }
 
   #handleDuplicate() {

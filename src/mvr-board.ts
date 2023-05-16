@@ -42,9 +42,6 @@ export class MvrBoard extends LitElement {
   @query('mvr-rows')
   private _$rows!: MvrRows;
 
-  @query('.table')
-  private _$table!: HTMLDivElement;
-
   render() {
     if (this._error) {
       return html`<p>${this._error}</p>`;
@@ -56,7 +53,6 @@ export class MvrBoard extends LitElement {
 
     return html`
       <mvr-rows .board=${this._board}></mvr-rows>
-      <div class="table" hidden></div>
     `;
   }
 
@@ -76,10 +72,6 @@ export class MvrBoard extends LitElement {
 
   addRow() {
     this._$rows?.addRow();
-  }
-
-  toggleTable() {
-    this._$table.hidden = !this._$table.hidden;
   }
 
   duplicatePanel() {
