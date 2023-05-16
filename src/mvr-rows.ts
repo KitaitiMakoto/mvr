@@ -2,6 +2,9 @@ import {LitElement, html, css} from 'lit';
 import {repeat} from 'lit/directives/repeat.js';
 import {property, customElement} from 'lit/decorators.js';
 
+import '@spectrum-web-components/action-group/sp-action-group.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-table-row-remove-center.js';
+
 import './mv-panel.js';
 import type {Board} from './mvr-board.js';
 
@@ -19,20 +22,27 @@ export class MvrRows extends LitElement {
 
     .row {
       display: flex;
-      align-items: center;
       gap: 1rem;
       padding-block: 1rem;
     }
 
-    .row h2 {
+    .header {
       flex-shrink: 0;
-      writing-mode: vertical-rl;
-      text-orientation: upright;
-      inline-size: calc(var(--panel-width, 10vw) * 4 / 3);
+      inline-size: 10rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      block-size: calc(var(--panel-width, 10vw) * 4 / 3);
+    }
+
+    .row h2 {
+      margin: 0;
+      line-height: 1;
     }
 
     .row h2 input {
       inline-size: 100%;
+      block-size: 100%;
       border: none;
       padding: 0.2rem 0.5rem;
       text-align: center;
@@ -74,22 +84,21 @@ export class MvrRows extends LitElement {
   @property()
   board!: Board;
 
-  @property({
-    reflect: true,
-    attribute: 'selectedpanel',
-    type: Array,
-    converter: {
-      fromAttribute: (value: string) => value.split(/\s*,\s*/).map(i => Number.parseInt(i, 10)),
-      toAttribute: (value: number[]) => value.join(',')
-    }
-  })
+  @property()
   selectedPanelIndex?: [number, number];
   
   render() {
     return html`
       ${this.board.items.map((items, i) => html`
         <div class="row">
-          <h2><input .value="${items.name}" placeholder="入力してください"></h2>
+          <div class="header">
+            <h2><input .value="${items.name}" placeholder="入力してください"></h2>
+            <sp-action-group>
+              <sp-action-button aria-label="行を削除" @click=${() => this.removeRow(i)}>
+                <sp-icon-table-row-remove-center slot="icon"></sp-icon-table-row-remove-center>
+              </sp-action-button>
+            </sp-action-group>
+          </div>
           <div class="items">
             ${repeat(items.items, ({src}, j) => src ?? j, ({src, alt, content}, j) => html`
               <div class="item">
@@ -97,7 +106,7 @@ export class MvrRows extends LitElement {
                   ${src ? html`<img src=${src} alt=${alt} loading="lazy">` : html`<textarea value=${content}></textarea>`}
                 </mv-panel>
               </div>
-              ${(j % 2 === 1 && j < items.items.length - 1) ? html`<hr class="divider">` : undefined}
+              ${(j % 2 === 1 && j !== items.items.length - 1) ? html`<hr class="divider">` : undefined}
             `)}
           </div>
         </div>
@@ -148,6 +157,29 @@ export class MvrRows extends LitElement {
         ...board,
         items: [...board.items, {name: '', items: []}]
       };
+    }
+  }
+
+  removeRow(index: number) {
+    if (! window.confirm('この行を削除していいですか？')) {
+      return;
+    }
+    const {board} = this;
+    this.board = {
+      ...board,
+      items: [
+        ...board.items.slice(0, index),
+        ...board.items.slice(index + 1)
+      ]
+    };
+    if (! this.selectedPanelIndex) {
+      return;
+    }
+    const rowIndex = this.selectedPanelIndex[0] - 1;
+    if (index === rowIndex) {
+      this.selectedPanelIndex = undefined;
+    } else if (index < rowIndex) {
+      this.selectedPanelIndex = [rowIndex, this.selectedPanelIndex[1]];
     }
   }
 

@@ -42,6 +42,7 @@ export class MvPanel extends LitElement {
       justify-content: center;
       aspect-ratio: 1;
       inline-size: 100%;
+      overflow: hidden;
       text-align: start;
     }
 
