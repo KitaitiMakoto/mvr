@@ -45,6 +45,12 @@ export class MvPanel extends LitElement {
       text-align: start;
     }
 
+    .folio {
+      font-size: small;
+      text-align: center;
+      color: gray;
+    }
+
     ::slotted(*) {
       inline-size: 100%;
       object-fit: scale-down;
@@ -57,6 +63,9 @@ export class MvPanel extends LitElement {
   @property({reflect: true})
   heading: string = '';
 
+  @property({reflect: true})
+  folio?: string;
+
   tabIndex = -1;
 
   render() {
@@ -64,7 +73,8 @@ export class MvPanel extends LitElement {
       <h2 class="heading"><input .value=${this.heading} placeholder="入力してください"></h2>
       <div class="content">
         <slot></slot>
-    </div>
+      </div>
+      <div class="folio">${this.folio}</div>
     `;
   }
 }
