@@ -90,7 +90,7 @@ export class MvrRows extends LitElement {
 
   @property()
   selectedPanelIndex?: [number, number];
-  
+
   render() {
     return html`
       ${this.board.items.map((items, i) => html`
