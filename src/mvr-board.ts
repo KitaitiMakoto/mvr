@@ -82,6 +82,36 @@ export class MvrBoard extends LitElement {
     this._$table.hidden = !this._$table.hidden;
   }
 
+  duplicatePanel() {
+    if (! this._board) {
+      return;
+    }
+    const index = this._$rows.selectedPanelIndex;
+    if (! index) {
+      return;
+    }
+    const {_board: board} = this;
+    const rowIndex = index[0] - 1;
+    const colIndex = index[1] - 1;
+    const row = board.items[rowIndex];
+    this._board = {
+      ...board,
+      items: [
+        ...board.items.slice(0, rowIndex),
+        {
+          ...row,
+          items: [
+            ...row.items.slice(0, colIndex + 1),
+            {...row.items[colIndex], key: crypto.randomUUID()},
+            ...row.items.slice(colIndex + 1)
+          ]
+        },
+        ...board.items.slice(rowIndex + 1)
+      ]
+    };
+    this._$rows.selectedPanelIndex = [rowIndex + 1, colIndex + 2];
+  }
+
   moveForward() {
     this._$rows.moveForward();
   }

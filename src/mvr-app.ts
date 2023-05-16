@@ -73,6 +73,9 @@ export class MvrApp extends LitElement {
           </div>
           <div class="controls">
             <sp-action-group>
+              <sp-action-button @click=${this.#handleDuplicate}>
+                複製
+              </sp-action-button>
               <sp-action-button @click=${this.#handleForward}>
                 先へ
               </sp-action-button>
@@ -107,6 +110,10 @@ export class MvrApp extends LitElement {
 
   #handleToggleTable() {
     this._board?.toggleTable();
+  }
+
+  #handleDuplicate() {
+    this._board?.duplicatePanel();
   }
 
   #handleForward() {
