@@ -414,9 +414,6 @@ export class MvrBoard extends LitElement {
     }
     const rowIndex = this.selectedPanelIndex[0] - 1;
     const colIndex = this.selectedPanelIndex[1] - 1;
-    if (colIndex === 0) {
-      return;
-    }
     const row = board.items[rowIndex];
     this._board = {
       ...board,
@@ -426,17 +423,17 @@ export class MvrBoard extends LitElement {
           ...board.items[rowIndex - 1],
           items: [
             ...(board.items[rowIndex - 1]?.items ?? []),
-            ...row.items.slice(0, colIndex)
+            ...row.items.slice(0, colIndex + 1)
           ]
         },
         {
           ...row,
-          items: row.items.slice(colIndex)
+          items: row.items.slice(colIndex + 1)
         },
         ...board.items.slice(rowIndex + 1)
       ]
     };
-    this.selectedPanelIndex = [rowIndex === 0 ? rowIndex + 1 : rowIndex + 2, 1];
+    this.selectedPanelIndex = rowIndex === 0 ? [rowIndex + 1, colIndex + 1] : [rowIndex, this._board.items[rowIndex - 1].items.length - 1 + colIndex];
   }
 
   async #load() {

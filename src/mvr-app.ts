@@ -84,7 +84,7 @@ export class MvrApp extends LitElement {
                 折り返す
               </sp-action-button>
               <sp-action-button @click=${this.#handleUnbreak}>
-                直前までを前の行へ
+                ここまで前の行へ
               </sp-action-button>
             </sp-action-group>
           </div>
