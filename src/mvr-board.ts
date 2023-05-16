@@ -1,8 +1,8 @@
 import {LitElement, css, html} from 'lit';
-import {property, customElement, state, query} from 'lit/decorators.js';
+import {property, customElement, state} from 'lit/decorators.js';
+import {repeat} from 'lit/directives/repeat.js';
 
 import './mvr-rows.js';
-import type {MvrRows} from './mvr-rows.js';
 
 export interface Board {
   items: {
@@ -20,27 +20,90 @@ export interface Board {
 @customElement('mvr-board')
 export class MvrBoard extends LitElement {
   static styles = css`
-    .table {
-      position: fixed;
-      bottom: 0;
+    :host {
+      --row-direction: row-reverse;
+
+      display: block;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    .row {
+      display: flex;
+      flex-direction: var(--row-direction);
+      gap: 1rem;
+      padding-block: 1rem;
+    }
+
+    .header {
+      flex-shrink: 0;
+      inline-size: 10rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      block-size: calc(var(--panel-width, 10vw) * 4 / 3);
+    }
+
+    .row h2 {
+      margin: 0;
+      line-height: 1;
+    }
+
+    .row h2 input {
       inline-size: 100%;
-      block-size: 6rem;
-      background-color: #ededed;
-      box-shadow: gray 0px 0px 4px;
+      block-size: 100%;
+      border: none;
+      padding: 0.2rem 0.5rem;
+      text-align: center;
+    }
+
+    .row .items {
+      display: flex;
+      flex-direction: var(--row-direction);
+      align-items: center;
+      gap: 1rem;
+      overflow-x: scroll;
+      scroll-behavior: smooth;
+    }
+
+    .row .item {
+      inline-size: var(--panel-width, 10vw);
+      aspect-ratio: 3 / 4;
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .row .item > * {
+      max-inline-size: 100%;
+      max-block-size: 100%;
+    }
+
+    .divider {
+      align-self: stretch;
+      margin-block: 1rem;
+      border: none;
+      border-inline-end: solid 1px gray;
+    }
+
+    mv-panel {
+      background-color: #fafafa;
     }
   `;
 
   @property({reflect: true})
   src?: string;
 
+  @property()
+  selectedPanelIndex?: [number, number];
+
   @state()
   private _board?: Board;
 
   @state()
   private _error?: string;
-
-  @query('mvr-rows')
-  private _$rows!: MvrRows;
 
   render() {
     if (this._error) {
@@ -52,7 +115,31 @@ export class MvrBoard extends LitElement {
     }
 
     return html`
-      <mvr-rows .board=${this._board}></mvr-rows>
+      ${this._board.items.map((items, i) => html`
+        <div class="row">
+          <div class="header">
+            <h2><input .value="${items.name}" placeholder="入力してください"></h2>
+            <sp-action-group>
+              <sp-action-button aria-label="行を先頭に戻す" @click=${() => this.goHome(i)}>
+                <sp-icon-home slot="icon"></sp-icon-home>
+              </sp-action-button>
+              <sp-action-button aria-label="行を削除" @click=${() => this.removeRow(i)}>
+                <sp-icon-table-row-remove-center slot="icon"></sp-icon-table-row-remove-center>
+              </sp-action-button>
+            </sp-action-group>
+          </div>
+          <div class="items">
+            ${repeat(items.items, ({key}) => key, ({src, alt, content}, j) => html`
+              <div class="item">
+                <mv-panel folio=${j} .selected=${i + 1 === this.selectedPanelIndex?.[0] && j + 1 === this.selectedPanelIndex?.[1]} @focusin="${this.#handleFocusIn}">
+                  ${src ? html`<img src=${src} alt=${alt} loading="lazy">` : html`<textarea value=${content}></textarea>`}
+                </mv-panel>
+              </div>
+              ${(j % 2 === 1 && j !== items.items.length - 1) ? html`<hr class="divider">` : undefined}
+            `)}
+          </div>
+        </div>
+      `)}
     `;
   }
 
@@ -66,19 +153,94 @@ export class MvrBoard extends LitElement {
     }
   }
 
+  goHome(i: number) {
+    this.renderRoot.querySelector(`.row:nth-child(${i + 1}) .item:first-child`)?.scrollIntoView({block: 'center', inline: 'start'});
+  }
+
   addText() {
-    this._$rows?.addText();
+    if (! this._board) {
+      return;
+    }
+    const index = this.selectedPanelIndex;
+    if (! index) {
+      return;
+    }
+    const row = index[0] - 1;
+    const column = index[1] - 1;
+    const {_board: board} = this;
+    this._board = {
+      ...board,
+      items: [
+        ...board.items.slice(0, row),
+        {
+          ...board.items[row],
+          items: [
+            ...board.items[row].items.slice(0, column + 1),
+            {key: crypto.randomUUID()},
+            ...board.items[row].items.slice(column + 1)
+          ]
+        },
+        ...board.items.slice(row + 1)
+      ]
+    };
+    this.selectedPanelIndex = [index[0], index[1] + 1];
   }
 
   addRow() {
-    this._$rows?.addRow();
+    if (! this._board) {
+      return;
+    }
+    const index = this.selectedPanelIndex;
+    const {_board: board} = this;
+    if (index) {
+      const rowIndex = index[0] - 1;
+      this._board = {
+        ...board,
+        items: [
+          ...board.items.slice(0, rowIndex + 1),
+          {name: '', items: []},
+          ...board.items.slice(rowIndex + 1)
+        ]
+      };
+    } else {
+      this._board = {
+        ...board,
+        items: [...board.items, {name: '', items: []}]
+      };
+    }
+  }
+
+  removeRow(index: number) {
+    const {_board: board} = this;
+    if (! board) {
+      return;
+    }
+    if (! window.confirm('この行を削除していいですか？')) {
+      return;
+    }
+    this._board = {
+      ...board,
+      items: [
+        ...board.items.slice(0, index),
+        ...board.items.slice(index + 1)
+      ]
+    };
+    if (! this.selectedPanelIndex) {
+      return;
+    }
+    const rowIndex = this.selectedPanelIndex[0] - 1;
+    if (index === rowIndex) {
+      this.selectedPanelIndex = undefined;
+    } else if (index < rowIndex) {
+      this.selectedPanelIndex = [rowIndex, this.selectedPanelIndex[1]];
+    }
   }
 
   duplicatePanel() {
     if (! this._board) {
       return;
     }
-    const index = this._$rows.selectedPanelIndex;
+    const index = this.selectedPanelIndex;
     if (! index) {
       return;
     }
@@ -101,14 +263,14 @@ export class MvrBoard extends LitElement {
         ...board.items.slice(rowIndex + 1)
       ]
     };
-    this._$rows.selectedPanelIndex = [rowIndex + 1, colIndex + 2];
+    this.selectedPanelIndex = [rowIndex + 1, colIndex + 2];
   }
 
   removePanel() {
     if (! this._board) {
       return;
     }
-    const index = this._$rows.selectedPanelIndex;
+    const index = this.selectedPanelIndex;
     if (! index) {
       return;
     }
@@ -133,23 +295,150 @@ export class MvrBoard extends LitElement {
         ...board.items.slice(rowIndex + 1)
       ]
     };
-    this._$rows.selectedPanelIndex = undefined;
+    this.selectedPanelIndex = undefined;
   }
 
   moveForward() {
-    this._$rows.moveForward();
+    const {_board: board} = this;
+    if (! board) {
+      return;
+    }
+    if (! this.selectedPanelIndex) {
+      return;
+    }
+    const rowIndex = this.selectedPanelIndex[0] - 1;
+    const colIndex = this.selectedPanelIndex[1] - 1;
+    const row = board.items[rowIndex];
+    if (colIndex >= row.items.length - 1) {
+      return;
+    }
+    this._board = {
+      ...board,
+      items: [
+        ...board.items.slice(0, rowIndex),
+        {
+          ...row,
+          items: [
+            ...row.items.slice(0, colIndex),
+            row.items[colIndex + 1],
+            row.items[colIndex],
+            ...row.items.slice(colIndex + 2)
+          ]
+        },
+        ...board.items.slice(rowIndex + 1)
+      ]
+    };
+    this.selectedPanelIndex = [rowIndex + 1, colIndex + 2];
   }
 
   moveBack() {
-    this._$rows.moveBack();
+    const {_board: board} = this;
+    if (! board) {
+      return;
+    }
+    if (! this.selectedPanelIndex) {
+      return;
+    }
+    const rowIndex = this.selectedPanelIndex[0] - 1;
+    const colIndex = this.selectedPanelIndex[1] - 1;
+    if (colIndex === 0) {
+      return;
+    }
+    const row = board.items[rowIndex];
+    this._board = {
+      ...board,
+      items: [
+        ...board.items.slice(0, rowIndex),
+        {
+          ...row,
+          items: [
+            ...row.items.slice(0, colIndex - 1),
+            row.items[colIndex],
+            row.items[colIndex - 1],
+            ...row.items.slice(colIndex + 1)
+          ]
+        },
+        ...board.items.slice(rowIndex + 1)
+      ]
+    };
+    this.selectedPanelIndex = [rowIndex + 1, colIndex];
   }
 
   break() {
-    this._$rows.break();
+    const index = this.selectedPanelIndex;
+    if (! index) {
+      return;
+    }
+    const rowIndex = index[0] - 1;
+    const colIndex = index[1] - 1;
+    const {_board: board} = this;
+    if (! board) {
+      return;
+    }
+    if (rowIndex === board.items.length - 1) {
+      this.addRow();
+    }
+    const row = board.items[rowIndex];
+    if (colIndex >= row.items.length - 1) {
+      return;
+    }
+    this._board = {
+      ...board,
+      items: [
+        ...board.items.slice(0, rowIndex),
+        {
+          ...row,
+          items: [
+            ...row.items.slice(0, colIndex + 1)
+          ]
+        },
+        {
+          ...board.items[rowIndex + 1],
+          items: [
+            ...row.items.slice(colIndex + 1),
+            ...board.items[rowIndex + 1].items
+          ]
+        },
+        ...board.items.slice(rowIndex + 2)
+      ]
+    };
   }
 
   unbreak() {
-    this._$rows.unbreak();
+    const {_board: board} = this;
+    if (! board) {
+      return;
+    }
+    if (! this.selectedPanelIndex) {
+      return;
+    }
+    const rowIndex = this.selectedPanelIndex[0] - 1;
+    const colIndex = this.selectedPanelIndex[1] - 1;
+    if (colIndex === 0) {
+      return;
+    }
+    const row = board.items[rowIndex];
+    const prepended = rowIndex === 0 ? [{name: '', items: row.items.slice(0, colIndex)}] : [];
+    this._board = {
+      ...board,
+      items: [
+        ...prepended,
+        ...board.items.slice(0, rowIndex - 1),
+        {
+          ...board.items[rowIndex - 1],
+          items: [
+            ...(board.items[rowIndex - 1]?.items ?? []),
+            ...row.items.slice(0, colIndex)
+          ]
+        },
+        {
+          ...row,
+          items: row.items.slice(colIndex)
+        },
+        ...board.items.slice(rowIndex + 1)
+      ]
+    };
+    this.selectedPanelIndex = [prepended.length === 0 ? rowIndex + 1 : rowIndex + 2, 1];
   }
 
   async #load() {
@@ -168,6 +457,19 @@ export class MvrBoard extends LitElement {
       ...board,
       items: board.items.map(item => ({...item, key: crypto.randomUUID()}))
     };
+  }
+
+  #handleFocusIn(event: FocusEvent) {
+    const panel = event.composedPath().find(elem => (elem as HTMLElement).tagName === 'MV-PANEL');
+    if (! panel) {
+      return;
+    }
+    const item = (panel as HTMLElement).closest('.item')!;
+    const items = item.parentNode as HTMLElement;
+    const column = Array.from(items.querySelectorAll('.item')).findIndex(elem => elem === item);
+    const rowElem = items.parentNode!;
+    const row = Array.from((rowElem.parentNode as HTMLElement).querySelectorAll('.row')).findIndex(elem => elem === rowElem);
+    this.selectedPanelIndex = [row + 1, column + 1];
   }
 }
 
