@@ -2,7 +2,11 @@ import {LitElement, css, html} from 'lit';
 import {property, customElement, state} from 'lit/decorators.js';
 import {repeat} from 'lit/directives/repeat.js';
 
-import './mvr-rows.js';
+import '@spectrum-web-components/action-group/sp-action-group.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-table-row-remove-center.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-home.js';
+
+import './mv-panel.js';
 
 export interface Board {
   items: {
