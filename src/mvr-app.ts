@@ -16,10 +16,13 @@ import type {MvrBoard} from './mvr-board.js';
 @customElement('mvr-app')
 export class MvrApp extends LitElement {
   static styles = css`
-    .controls {
+    .controls-wrapper {
       position: sticky;
       inset-block-start: 0;
       z-index: 12;
+    }
+
+    .controls {
       display: flex;
       justify-content: space-between;
       padding: 0.5rem 1rem;
@@ -46,40 +49,44 @@ export class MvrApp extends LitElement {
 
     return html`
       <sp-theme scale="medium" color="light">
-        <div class="controls">
-          <sp-action-group>
-            <sp-action-button @click=${this.#handleAddText}>
-              <sp-icon-text-add slot="icon"></sp-icon-text-add>
-              テキスト
-            </sp-action-button>
-            <sp-action-button @click=${this.#handleAddRow}>
-              <sp-icon-feed-add slot="icon"></sp-icon-feed-add>
-              行
-            </sp-action-button>
-          </sp-action-group>
-          <sp-action-group>
-            <sp-action-button @click=${this.#handleToggleTable}>
-              <sp-icon-folder slot="icon"></sp-icon-folder>一時置き場
-            </sp-action-button>
-          </sp-action-group>
-          <sp-action-group>
-            <sp-field-label>パネル幅</sp-field-label>
-            <sp-slider id="panel-width" min="5" value="10" @input=${this.#handlePanelWidthChange} label-visibility="none"></sp-slider>
-          </sp-action-group>
-          <sp-action-group>
-            <sp-action-button @click=${this.#handleForward}>
-              先へ
-            </sp-action-button>
-            <sp-action-button @click=${this.#handleBack}>
-              後ろへ
-            </sp-action-button>
-            <sp-action-button @click=${this.#handleBreak}>
-              折り返す
-            </sp-action-button>
-            <sp-action-button @click=${this.#handleUnbreak}>
-              直前までを前の行へ
-            </sp-action-button>
-          </sp-action-group>
+        <div class="controls-wrapper">
+          <div class="controls">
+            <sp-action-group>
+              <sp-action-button @click=${this.#handleAddText}>
+                <sp-icon-text-add slot="icon"></sp-icon-text-add>
+                テキスト
+              </sp-action-button>
+              <sp-action-button @click=${this.#handleAddRow}>
+                <sp-icon-feed-add slot="icon"></sp-icon-feed-add>
+                行
+              </sp-action-button>
+            </sp-action-group>
+            <sp-action-group>
+              <sp-action-button @click=${this.#handleToggleTable}>
+                <sp-icon-folder slot="icon"></sp-icon-folder>一時置き場
+              </sp-action-button>
+            </sp-action-group>
+            <sp-action-group>
+              <sp-field-label>パネル幅</sp-field-label>
+              <sp-slider id="panel-width" min="5" value="10" @input=${this.#handlePanelWidthChange} label-visibility="none"></sp-slider>
+            </sp-action-group>
+          </div>
+          <div class="controls">
+            <sp-action-group>
+              <sp-action-button @click=${this.#handleForward}>
+                先へ
+              </sp-action-button>
+              <sp-action-button @click=${this.#handleBack}>
+                後ろへ
+              </sp-action-button>
+              <sp-action-button @click=${this.#handleBreak}>
+                折り返す
+              </sp-action-button>
+              <sp-action-button @click=${this.#handleUnbreak}>
+                直前までを前の行へ
+              </sp-action-button>
+            </sp-action-group>
+          </div>
         </div>
         <mvr-board src="${src}" @selectpanel></mvr-board>
       </sp-theme>

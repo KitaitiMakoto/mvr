@@ -97,7 +97,7 @@ export class MvrRows extends LitElement {
                   ${src ? html`<img src=${src} alt=${alt} loading="lazy">` : html`<textarea value=${content}></textarea>`}
                 </mv-panel>
               </div>
-              ${j % 2 === 1 ? html`<hr class="divider">` : undefined}
+              ${(j % 2 === 1 && j < items.items.length - 1) ? html`<hr class="divider">` : undefined}
             `)}
           </div>
         </div>
