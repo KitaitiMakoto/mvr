@@ -104,7 +104,7 @@ export class MvrBoard extends LitElement {
   selectedPanelIndex?: [number, number];
 
   @state()
-  private _board?: Board;
+  _board?: Board;
 
   @state()
   private _error?: string;
