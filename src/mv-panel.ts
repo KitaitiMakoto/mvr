@@ -12,6 +12,7 @@ export class MvPanel extends LitElement {
       inline-size: 100%;
       block-size: 100%;
       padding: 8%;
+      contain: content;
     }
 
     :host([selected]) {
