@@ -139,6 +139,136 @@ export class MvrRows extends LitElement {
     };
   }
 
+  moveForward() {
+    if (! this.selectedPanelIndex) {
+      return;
+    }
+    const rowIndex = this.selectedPanelIndex[0] - 1;
+    const colIndex = this.selectedPanelIndex[1] - 1;
+    const {board} = this;
+    const row = board.items[rowIndex];
+    if (colIndex >= row.items.length - 1) {
+      return;
+    }
+    this.board = {
+      ...board,
+      items: [
+        ...board.items.slice(0, rowIndex),
+        {
+          ...row,
+          items: [
+            ...row.items.slice(0, colIndex),
+            row.items[colIndex + 1],
+            row.items[colIndex],
+            ...row.items.slice(colIndex + 2)
+          ]
+        },
+        ...board.items.slice(rowIndex + 1)
+      ]
+    };
+    this.selectedPanelIndex = [rowIndex + 1, colIndex + 2];
+  }
+
+  moveBack() {
+    if (! this.selectedPanelIndex) {
+      return;
+    }
+    const rowIndex = this.selectedPanelIndex[0] - 1;
+    const colIndex = this.selectedPanelIndex[1] - 1;
+    if (colIndex === 0) {
+      return;
+    }
+    const {board} = this;
+    const row = board.items[rowIndex];
+    this.board = {
+      ...board,
+      items: [
+        ...board.items.slice(0, rowIndex),
+        {
+          ...row,
+          items: [
+            ...row.items.slice(0, colIndex - 1),
+            row.items[colIndex],
+            row.items[colIndex - 1],
+            ...row.items.slice(colIndex + 1)
+          ]
+        },
+        ...board.items.slice(rowIndex + 1)
+      ]
+    };
+    this.selectedPanelIndex = [rowIndex + 1, colIndex];
+  }
+
+  break() {
+    if (! this.selectedPanelIndex) {
+      return;
+    }
+    const rowIndex = this.selectedPanelIndex[0] - 1;
+    const colIndex = this.selectedPanelIndex[1] - 1;
+    const {board} = this;
+    if (rowIndex === board.items.length - 1) {
+      this.addRow();
+    }
+    const row = board.items[rowIndex];
+    if (colIndex >= row.items.length - 1) {
+      return;
+    }
+    this.board = {
+      ...board,
+      items: [
+        ...board.items.slice(0, rowIndex),
+        {
+          ...row,
+          items: [
+            ...row.items.slice(0, colIndex + 1)
+          ]
+        },
+        {
+          ...board.items[rowIndex + 1],
+          items: [
+            ...row.items.slice(colIndex + 1),
+            ...board.items[rowIndex + 1].items
+          ]
+        },
+        ...board.items.slice(rowIndex + 2)
+      ]
+    };
+  }
+
+  unbreak() {
+    if (! this.selectedPanelIndex) {
+      return;
+    }
+    const rowIndex = this.selectedPanelIndex[0] - 1;
+    const colIndex = this.selectedPanelIndex[1] - 1;
+    const {board} = this;
+    if (colIndex === 0) {
+      return;
+    }
+    const row = board.items[rowIndex];
+    const prepended = rowIndex === 0 ? [{name: '', items: row.items.slice(0, colIndex)}] : [];
+    this.board = {
+      ...board,
+      items: [
+        ...prepended,
+        ...board.items.slice(0, rowIndex - 1),
+        {
+          ...board.items[rowIndex - 1],
+          items: [
+            ...(board.items[rowIndex - 1]?.items ?? []),
+            ...row.items.slice(0, colIndex)
+          ]
+        },
+        {
+          ...row,
+          items: row.items.slice(colIndex)
+        },
+        ...board.items.slice(rowIndex + 1)
+      ]
+    };
+    this.selectedPanelIndex = [prepended.length === 0 ? rowIndex + 1 : rowIndex + 2, 1];
+  }
+
   #handleFocusIn(event: FocusEvent) {
     const panel = event.composedPath().find(elem => (elem as HTMLElement).tagName === 'MV-PANEL');
     if (! panel) {

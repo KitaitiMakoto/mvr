@@ -66,8 +66,22 @@ export class MvrApp extends LitElement {
             <sp-field-label>パネル幅</sp-field-label>
             <sp-slider id="panel-width" min="5" value="10" @input=${this.#handlePanelWidthChange} label-visibility="none"></sp-slider>
           </sp-action-group>
+          <sp-action-group>
+            <sp-action-button @click=${this.#handleForward}>
+              先へ
+            </sp-action-button>
+            <sp-action-button @click=${this.#handleBack}>
+              後ろへ
+            </sp-action-button>
+            <sp-action-button @click=${this.#handleBreak}>
+              折り返す
+            </sp-action-button>
+            <sp-action-button @click=${this.#handleUnbreak}>
+              直前までを前の行へ
+            </sp-action-button>
+          </sp-action-group>
         </div>
-        <mvr-board src="${src}"></mvr-board>
+        <mvr-board src="${src}" @selectpanel></mvr-board>
       </sp-theme>
     `;
   }
@@ -86,6 +100,22 @@ export class MvrApp extends LitElement {
 
   #handleToggleTable() {
     this._board?.toggleTable();
+  }
+
+  #handleForward() {
+    this._board?.moveForward();
+  }
+
+  #handleBack() {
+    this._board?.moveBack();
+  }
+
+  #handleBreak() {
+    this._board?.break();
+  }
+
+  #handleUnbreak() {
+    this._board?.unbreak();
   }
 }
 

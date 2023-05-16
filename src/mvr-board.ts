@@ -81,6 +81,22 @@ export class MvrBoard extends LitElement {
     this._$table.hidden = !this._$table.hidden;
   }
 
+  moveForward() {
+    this._$rows.moveForward();
+  }
+
+  moveBack() {
+    this._$rows.moveBack();
+  }
+
+  break() {
+    this._$rows.break();
+  }
+
+  unbreak() {
+    this._$rows.unbreak();
+  }
+
   async #load() {
     this._board = undefined;
     this._error = undefined;
