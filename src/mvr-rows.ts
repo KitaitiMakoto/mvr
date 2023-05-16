@@ -89,7 +89,7 @@ export class MvrRows extends LitElement {
     return html`
       ${this.board.items.map((items, i) => html`
         <div class="row">
-          <h2><input .value="${items.name}"></h2>
+          <h2><input .value="${items.name}" placeholder="入力してください"></h2>
           <div class="items">
             ${repeat(items.items, ({src}, j) => src ?? j, ({src, alt, content}, j) => html`
               <div class="item">
@@ -135,7 +135,7 @@ export class MvrRows extends LitElement {
     const {board} = this;
     this.board = {
       ...board,
-      items: [...board.items, {name: '新規行', items: []}]
+      items: [...board.items, {name: '', items: []}]
     };
   }
 
