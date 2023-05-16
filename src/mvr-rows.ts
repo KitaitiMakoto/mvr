@@ -4,6 +4,7 @@ import {property, customElement} from 'lit/decorators.js';
 
 import '@spectrum-web-components/action-group/sp-action-group.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-table-row-remove-center.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-home.js';
 
 import './mv-panel.js';
 import type {Board} from './mvr-board.js';
@@ -56,6 +57,7 @@ export class MvrRows extends LitElement {
       align-items: center;
       gap: 1rem;
       overflow-x: scroll;
+      scroll-behavior: smooth;
     }
 
     .row .item {
@@ -96,6 +98,9 @@ export class MvrRows extends LitElement {
           <div class="header">
             <h2><input .value="${items.name}" placeholder="入力してください"></h2>
             <sp-action-group>
+              <sp-action-button aria-label="行を先頭に戻す" @click=${() => this.goHome(i)}>
+                <sp-icon-home slot="icon"></sp-icon-home>
+              </sp-action-button>
               <sp-action-button aria-label="行を削除" @click=${() => this.removeRow(i)}>
                 <sp-icon-table-row-remove-center slot="icon"></sp-icon-table-row-remove-center>
               </sp-action-button>
@@ -114,6 +119,10 @@ export class MvrRows extends LitElement {
         </div>
       `)}
     `;
+  }
+
+  goHome(i: number) {
+    this.renderRoot.querySelector(`.row:nth-child(${i + 1}) .item:first-child`)?.scrollIntoView({block: 'center', inline: 'start'});
   }
 
   addText() {
