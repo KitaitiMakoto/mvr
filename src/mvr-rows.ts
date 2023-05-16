@@ -93,7 +93,7 @@ export class MvrRows extends LitElement {
           <div class="items">
             ${repeat(items.items, ({src}, j) => src ?? j, ({src, alt, content}, j) => html`
               <div class="item">
-                <mv-panel .selected=${i + 1 === this.selectedPanelIndex?.[0] && j + 1 === this.selectedPanelIndex?.[1]} @focusin="${this.#handleFocusIn}">
+                <mv-panel folio=${j} .selected=${i + 1 === this.selectedPanelIndex?.[0] && j + 1 === this.selectedPanelIndex?.[1]} @focusin="${this.#handleFocusIn}">
                   ${src ? html`<img src=${src} alt=${alt} loading="lazy">` : html`<textarea value=${content}></textarea>`}
                 </mv-panel>
               </div>
