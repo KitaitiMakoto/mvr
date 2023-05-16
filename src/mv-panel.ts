@@ -1,5 +1,5 @@
 import {LitElement, css, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 @customElement('mv-panel')
 export class MvPanel extends LitElement {
@@ -68,16 +68,23 @@ export class MvPanel extends LitElement {
   @property({reflect: true})
   folio?: string;
 
+  @query('input[name="heading"]')
+  private _$headingInput!: HTMLInputElement;
+
   tabIndex = -1;
 
   render() {
     return html`
-      <h2 class="heading"><input .value=${this.heading} placeholder="入力してください"></h2>
+      <h2 class="heading"><input name="heading" .value=${this.heading} placeholder="入力してください" @change=${this.#handleHeadingChange}></h2>
       <div class="content">
         <slot></slot>
       </div>
       <div class="folio">${this.folio}</div>
     `;
+  }
+
+  #handleHeadingChange(event: Event) {
+    this.dispatchEvent(new CustomEvent('headingchange', {detail: {value: this._$headingInput.value}}));
   }
 }
 

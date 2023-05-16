@@ -1,4 +1,4 @@
-import {LitElement, css, html} from 'lit';
+import {LitElement, PropertyValueMap, css, html} from 'lit';
 import {property, customElement, state} from 'lit/decorators.js';
 import {repeat} from 'lit/directives/repeat.js';
 
@@ -133,9 +133,9 @@ export class MvrBoard extends LitElement {
             </sp-action-group>
           </div>
           <div class="items">
-            ${repeat(items.items, ({key}) => key, ({src, alt, content}, j) => html`
+            ${repeat(items.items, ({key}) => key, ({name, src, alt, content}, j) => html`
               <div class="item">
-                <mv-panel folio=${j} .selected=${i + 1 === this.selectedPanelIndex?.[0] && j + 1 === this.selectedPanelIndex?.[1]} @focusin="${this.#handleFocusIn}">
+                <mv-panel heading=${name} folio=${j} .selected=${i + 1 === this.selectedPanelIndex?.[0] && j + 1 === this.selectedPanelIndex?.[1]} @focusin="${this.#handleFocusIn}" @headingchange=${(e: CustomEvent) => this.#handleHeadingChange(i, j, e)}>
                   ${src ? html`<img src=${src} alt=${alt} loading="lazy">` : html`<textarea value=${content}></textarea>`}
                 </mv-panel>
               </div>
@@ -155,6 +155,12 @@ export class MvrBoard extends LitElement {
         break;
       default:
     }
+  }
+
+  protected updated(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    if (changedProperties.has('_board')) {
+      console.debug(this._board);
+    }      
   }
 
   goHome(i: number) {
@@ -469,6 +475,29 @@ export class MvrBoard extends LitElement {
     const rowElem = items.parentNode!;
     const row = Array.from((rowElem.parentNode as HTMLElement).querySelectorAll('.row')).findIndex(elem => elem === rowElem);
     this.selectedPanelIndex = [row + 1, column + 1];
+  }
+
+  #handleHeadingChange(rowIndex: number, colIndex: number, event: CustomEvent) {
+    const {_board: board} = this;
+    if (! board) {
+      return;
+    }
+    const row = board.items[rowIndex];
+    this._board = {
+      ...board,
+      items: [
+        ...board.items.slice(0, rowIndex),
+        {
+          ...row,
+          items: [
+            ...row.items.slice(0, colIndex),
+            {...row.items[colIndex], name: event.detail.value},
+            ...row.items.slice(colIndex + 1)
+          ]
+        },
+        ...board.items.slice(rowIndex + 1)
+      ]
+    };
   }
 }
 
