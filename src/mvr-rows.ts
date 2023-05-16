@@ -107,7 +107,7 @@ export class MvrRows extends LitElement {
             </sp-action-group>
           </div>
           <div class="items">
-            ${repeat(items.items, ({src}, j) => src ?? j, ({src, alt, content}, j) => html`
+            ${repeat(items.items, ({key}) => key, ({src, alt, content}, j) => html`
               <div class="item">
                 <mv-panel folio=${j} .selected=${i + 1 === this.selectedPanelIndex?.[0] && j + 1 === this.selectedPanelIndex?.[1]} @focusin="${this.#handleFocusIn}">
                   ${src ? html`<img src=${src} alt=${alt} loading="lazy">` : html`<textarea value=${content}></textarea>`}
@@ -141,7 +141,7 @@ export class MvrRows extends LitElement {
           ...board.items[row],
           items: [
             ...board.items[row].items.slice(0, column + 1),
-            {},
+            {key: crypto.randomUUID()},
             ...board.items[row].items.slice(column + 1)
           ]
         },

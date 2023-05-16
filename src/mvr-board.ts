@@ -8,6 +8,7 @@ export interface Board {
   items: {
     name: string;
     items: {
+      key: `${string}-${string}-${string}-${string}-${string}`,
       name?: string;
       src?: string;
       alt?: string;
@@ -103,12 +104,16 @@ export class MvrBoard extends LitElement {
     if (! this.src) {
       return;
     }
-    this._board = await fetch(this.src).then(res => res.json())
+    const board: Omit<Board, 'key'> = await fetch(this.src).then(res => res.json())
                     .catch(err => {
                       this._error = err;
                       // eslint-disable-next-line no-console
                       console.error(err);
                     });
+    this._board = {
+      ...board,
+      items: board.items.map(item => ({...item, key: crypto.randomUUID()}))
+    };
   }
 }
 
