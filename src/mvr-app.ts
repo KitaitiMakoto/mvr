@@ -76,6 +76,9 @@ export class MvrApp extends LitElement {
               <sp-action-button @click=${this.#handleDuplicate}>
                 複製
               </sp-action-button>
+              <sp-action-button @click=${this.#handleRemove}>
+                削除
+              </sp-action-button>
               <sp-action-button @click=${this.#handleForward}>
                 先へ
               </sp-action-button>
@@ -114,6 +117,10 @@ export class MvrApp extends LitElement {
 
   #handleDuplicate() {
     this._board?.duplicatePanel();
+  }
+
+  #handleRemove() {
+    this._board?.removePanel();
   }
 
   #handleForward() {

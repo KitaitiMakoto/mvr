@@ -112,6 +112,38 @@ export class MvrBoard extends LitElement {
     this._$rows.selectedPanelIndex = [rowIndex + 1, colIndex + 2];
   }
 
+  removePanel() {
+    if (! this._board) {
+      return;
+    }
+    const index = this._$rows.selectedPanelIndex;
+    if (! index) {
+      return;
+    }
+    if (! window.confirm('選択したパネルを削除しますか？')) {
+      return;
+    }
+    const {_board: board} = this;
+    const rowIndex = index[0] - 1;
+    const colIndex = index[1] - 1;
+    const row = board.items[rowIndex];
+    this._board = {
+      ...board,
+      items: [
+        ...board.items.slice(0, rowIndex),
+        {
+          ...row,
+          items: [
+            ...row.items.slice(0, colIndex),
+            ...row.items.slice(colIndex + 1)
+          ]
+        },
+        ...board.items.slice(rowIndex + 1)
+      ]
+    };
+    this._$rows.selectedPanelIndex = undefined;
+  }
+
   moveForward() {
     this._$rows.moveForward();
   }
