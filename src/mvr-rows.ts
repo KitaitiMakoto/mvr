@@ -12,8 +12,9 @@ import type {Board} from './mvr-board.js';
 export class MvrRows extends LitElement {
   static styles = css`
     :host {
+      --row-direction: row-reverse;
+
       display: block;
-      direction: rtl;
     }
 
     * {
@@ -22,6 +23,7 @@ export class MvrRows extends LitElement {
 
     .row {
       display: flex;
+      flex-direction: var(--row-direction);
       gap: 1rem;
       padding-block: 1rem;
     }
@@ -50,10 +52,10 @@ export class MvrRows extends LitElement {
 
     .row .items {
       display: flex;
+      flex-direction: var(--row-direction);
       align-items: center;
       gap: 1rem;
       overflow-x: scroll;
-      direction: rtl;
     }
 
     .row .item {
