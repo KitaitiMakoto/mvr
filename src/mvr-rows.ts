@@ -133,10 +133,22 @@ export class MvrRows extends LitElement {
 
   addRow() {
     const {board} = this;
-    this.board = {
-      ...board,
-      items: [...board.items, {name: '', items: []}]
-    };
+    if (this.selectedPanelIndex) {
+      const rowIndex = this.selectedPanelIndex[0] - 1;
+      this.board = {
+        ...board,
+        items: [
+          ...board.items.slice(0, rowIndex + 1),
+          {name: '', items: []},
+          ...board.items.slice(rowIndex + 1)
+        ]
+      };
+    } else {
+      this.board = {
+        ...board,
+        items: [...board.items, {name: '', items: []}]
+      };
+    }
   }
 
   moveForward() {
