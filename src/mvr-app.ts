@@ -50,9 +50,6 @@ export class MvrApp extends LitElement {
     }
   `;
 
-  @state()
-  board?: Board;
-
   @query('#panel-width')
   _$panelWidth!: HTMLInputElement;
 
@@ -125,7 +122,7 @@ export class MvrApp extends LitElement {
           </div>
         </div>
         <dialog id="share-dialog">
-          <textarea .value=${JSON.stringify(this._board?.srcObject ?? '', undefined, '  ')}></textarea>
+          <textarea .value=${JSON.stringify(this._$board?.srcObject ?? '', undefined, '  ')}></textarea>
         </dialog>
         <mvr-board src="${src}" .srcObject=${board} @selectpanel></mvr-board>
       </sp-theme>
@@ -145,8 +142,8 @@ export class MvrApp extends LitElement {
   }
 
   #handleShare() {
-    this.board = this._$board?.boardObject;
     this._$shareDialog.open = !this._$shareDialog.open;
+    this.requestUpdate();
   }
 
   #handleDuplicate() {
