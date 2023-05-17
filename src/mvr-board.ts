@@ -48,6 +48,7 @@ export class MvrBoard extends LitElement {
       inline-size: 10rem;
       display: flex;
       flex-wrap: wrap;
+      align-content: flex-start;
       gap: 0.5rem;
       block-size: calc(var(--panel-width, 10vw) * 4 / 3);
     }
