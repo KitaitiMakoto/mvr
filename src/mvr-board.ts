@@ -136,7 +136,7 @@ export class MvrBoard extends LitElement {
       ${this.srcObject.items.map((items, i) => html`
         <div class="row">
           <div class="header">
-            <h2><input .value="${items.name}" placeholder="入力してください"></h2>
+            <h2><input .value="${items.name}" placeholder="入力してください" @change=${(e: Event) => this.#handleRowHeadingChange(i, e.currentTarget)}></h2>
             <sp-action-group>
               <sp-action-button aria-label="行を先頭に戻す" @click=${() => this.goHome(i)}>
                 <sp-icon-home slot="icon"></sp-icon-home>
@@ -242,7 +242,8 @@ export class MvrBoard extends LitElement {
     if (! board) {
       return;
     }
-    if (! window.confirm('この行を削除していいですか？')) {
+    const rowName = this.srcObject?.items[index].name || 'この行';
+    if (! window.confirm(`${rowName}を削除していいですか？`)) {
       return;
     }
     this.srcObject = {
@@ -513,6 +514,24 @@ export class MvrBoard extends LitElement {
           ]
         },
         ...board.items.slice(rowIndex + 1)
+      ]
+    };
+  }
+
+  #handleRowHeadingChange(index: number, target: EventTarget | null) {
+    const {srcObject: board} = this;
+    if (! board) {
+      return;
+    }
+    this.srcObject = {
+      ...board,
+      items: [
+        ...board.items.slice(0, index),
+        {
+          ...board.items[index],
+          name: (target as HTMLInputElement)?.value
+        },
+        ...board.items.slice(index + 1)
       ]
     };
   }
