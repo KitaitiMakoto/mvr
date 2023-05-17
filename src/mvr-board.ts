@@ -1,6 +1,7 @@
 import {LitElement, PropertyValueMap, css, html} from 'lit';
 import {property, customElement, state} from 'lit/decorators.js';
 import {repeat} from 'lit/directives/repeat.js';
+import {animate} from '@lit-labs/motion';
 
 import '@spectrum-web-components/action-group/sp-action-group.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-table-row-remove-center.js';
@@ -150,7 +151,7 @@ export class MvrBoard extends LitElement {
           </div>
           <div class="items">
             ${repeat(items.items, ({key}) => key, ({name, src, alt, content}, j) => html`
-              <div class="item">
+              <div class="item" ${animate()}>
                 <mv-panel heading=${name} folio=${j} .selected=${i + 1 === this.selectedPanelIndex?.[0] && j + 1 === this.selectedPanelIndex?.[1]} @focusin="${this.#handleFocusIn}" @headingchange=${(e: CustomEvent) => this.#handleHeadingChange(i, j, e)}>
                   ${src ? html`<img src=${src} alt=${alt} loading="lazy">` : html`<textarea .value=${content ?? ''} @change=${(e: Event) => this.#handleContentChange(i, j, (e.currentTarget as HTMLTextAreaElement)?.value)}></textarea>`}
                 </mv-panel>
