@@ -106,12 +106,16 @@ export class MvrApp extends LitElement {
               <sp-action-button @click=${this.#handleRemove}>
                 削除
               </sp-action-button>
+            </sp-action-group>
+            <sp-action-group>
               <sp-action-button @click=${this.#handleForward}>
                 先へ
               </sp-action-button>
               <sp-action-button @click=${this.#handleBack}>
                 後ろへ
               </sp-action-button>
+            </sp-action-group>
+            <sp-action-group>
               <sp-action-button @click=${this.#handleBreak}>
                 折り返す
               </sp-action-button>
