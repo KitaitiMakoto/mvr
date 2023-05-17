@@ -57,7 +57,7 @@ export class MvrApp extends LitElement {
   _$panelWidth!: HTMLInputElement;
 
   @query('mvr-board')
-  _board?: MvrBoard;
+  _$board?: MvrBoard;
 
   @query('#share-dialog')
   _$shareDialog!: HTMLDialogElement;
@@ -133,44 +133,44 @@ export class MvrApp extends LitElement {
   }
 
   #handlePanelWidthChange() {
-    this._board?.style.setProperty('--panel-width', `${this._$panelWidth.value}vw`);
+    this._$board?.style.setProperty('--panel-width', `${this._$panelWidth.value}vw`);
   }
 
   #handleAddText() {
-    this._board?.addText();
+    this._$board?.addText();
   }
 
   #handleAddRow() {
-    this._board?.addRow();
+    this._$board?.addRow();
   }
 
   #handleShare() {
-    this.board = this._board?.boardObject;
+    this.board = this._$board?.boardObject;
     this._$shareDialog.open = !this._$shareDialog.open;
   }
 
   #handleDuplicate() {
-    this._board?.duplicatePanel();
+    this._$board?.duplicatePanel();
   }
 
   #handleRemove() {
-    this._board?.removePanel();
+    this._$board?.removePanel();
   }
 
   #handleForward() {
-    this._board?.moveForward();
+    this._$board?.moveForward();
   }
 
   #handleBack() {
-    this._board?.moveBack();
+    this._$board?.moveBack();
   }
 
   #handleBreak() {
-    this._board?.break();
+    this._$board?.break();
   }
 
   #handleUnbreak() {
-    this._board?.unbreak();
+    this._$board?.unbreak();
   }
 }
 
