@@ -118,7 +118,7 @@ export class MvrBoard extends LitElement {
   selectedPanelIndex?: [number, number];
 
   @state()
-  _board?: Board;
+  srcObject?: Board;
 
   @state()
   private _error?: string;
@@ -128,12 +128,12 @@ export class MvrBoard extends LitElement {
       return html`<p>${this._error}</p>`;
     }
 
-    if (! this._board) {
+    if (! this.srcObject) {
       return html`<p>Loading...</p>`;
     }
 
     return html`
-      ${this._board.items.map((items, i) => html`
+      ${this.srcObject.items.map((items, i) => html`
         <div class="row">
           <div class="header">
             <h2><input .value="${items.name}" placeholder="入力してください"></h2>
@@ -175,8 +175,8 @@ export class MvrBoard extends LitElement {
   }
 
   protected updated(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-    if (changedProperties.has('_board') && this._board) {
-      localStorage.setItem('board', JSON.stringify(this._board));
+    if (changedProperties.has('srcObject') && this.srcObject) {
+      localStorage.setItem('board', JSON.stringify(this.srcObject));
     }      
   }
 
@@ -185,7 +185,7 @@ export class MvrBoard extends LitElement {
   }
 
   addText() {
-    if (! this._board) {
+    if (! this.srcObject) {
       return;
     }
     const index = this.selectedPanelIndex;
@@ -194,8 +194,8 @@ export class MvrBoard extends LitElement {
     }
     const row = index[0] - 1;
     const column = index[1] - 1;
-    const {_board: board} = this;
-    this._board = {
+    const {srcObject: board} = this;
+    this.srcObject = {
       ...board,
       items: [
         ...board.items.slice(0, row),
@@ -214,14 +214,14 @@ export class MvrBoard extends LitElement {
   }
 
   addRow() {
-    if (! this._board) {
+    if (! this.srcObject) {
       return;
     }
     const index = this.selectedPanelIndex;
-    const {_board: board} = this;
+    const {srcObject: board} = this;
     if (index) {
       const rowIndex = index[0] - 1;
-      this._board = {
+      this.srcObject = {
         ...board,
         items: [
           ...board.items.slice(0, rowIndex + 1),
@@ -230,7 +230,7 @@ export class MvrBoard extends LitElement {
         ]
       };
     } else {
-      this._board = {
+      this.srcObject = {
         ...board,
         items: [...board.items, {name: '', items: []}]
       };
@@ -238,14 +238,14 @@ export class MvrBoard extends LitElement {
   }
 
   removeRow(index: number) {
-    const {_board: board} = this;
+    const {srcObject: board} = this;
     if (! board) {
       return;
     }
     if (! window.confirm('この行を削除していいですか？')) {
       return;
     }
-    this._board = {
+    this.srcObject = {
       ...board,
       items: [
         ...board.items.slice(0, index),
@@ -264,18 +264,18 @@ export class MvrBoard extends LitElement {
   }
 
   duplicatePanel() {
-    if (! this._board) {
+    if (! this.srcObject) {
       return;
     }
     const index = this.selectedPanelIndex;
     if (! index) {
       return;
     }
-    const {_board: board} = this;
+    const {srcObject: board} = this;
     const rowIndex = index[0] - 1;
     const colIndex = index[1] - 1;
     const row = board.items[rowIndex];
-    this._board = {
+    this.srcObject = {
       ...board,
       items: [
         ...board.items.slice(0, rowIndex),
@@ -294,7 +294,7 @@ export class MvrBoard extends LitElement {
   }
 
   removePanel() {
-    if (! this._board) {
+    if (! this.srcObject) {
       return;
     }
     const index = this.selectedPanelIndex;
@@ -304,11 +304,11 @@ export class MvrBoard extends LitElement {
     if (! window.confirm('選択したパネルを削除しますか？')) {
       return;
     }
-    const {_board: board} = this;
+    const {srcObject: board} = this;
     const rowIndex = index[0] - 1;
     const colIndex = index[1] - 1;
     const row = board.items[rowIndex];
-    this._board = {
+    this.srcObject = {
       ...board,
       items: [
         ...board.items.slice(0, rowIndex),
@@ -326,7 +326,7 @@ export class MvrBoard extends LitElement {
   }
 
   moveForward() {
-    const {_board: board} = this;
+    const {srcObject: board} = this;
     if (! board) {
       return;
     }
@@ -339,7 +339,7 @@ export class MvrBoard extends LitElement {
     if (colIndex >= row.items.length - 1) {
       return;
     }
-    this._board = {
+    this.srcObject = {
       ...board,
       items: [
         ...board.items.slice(0, rowIndex),
@@ -359,7 +359,7 @@ export class MvrBoard extends LitElement {
   }
 
   moveBack() {
-    const {_board: board} = this;
+    const {srcObject: board} = this;
     if (! board) {
       return;
     }
@@ -372,7 +372,7 @@ export class MvrBoard extends LitElement {
       return;
     }
     const row = board.items[rowIndex];
-    this._board = {
+    this.srcObject = {
       ...board,
       items: [
         ...board.items.slice(0, rowIndex),
@@ -398,7 +398,7 @@ export class MvrBoard extends LitElement {
     }
     const rowIndex = index[0] - 1;
     const colIndex = index[1] - 1;
-    const {_board: board} = this;
+    const {srcObject: board} = this;
     if (! board) {
       return;
     }
@@ -409,7 +409,7 @@ export class MvrBoard extends LitElement {
     if (colIndex >= row.items.length - 1) {
       return;
     }
-    this._board = {
+    this.srcObject = {
       ...board,
       items: [
         ...board.items.slice(0, rowIndex),
@@ -432,7 +432,7 @@ export class MvrBoard extends LitElement {
   }
 
   unbreak() {
-    const {_board: board} = this;
+    const {srcObject: board} = this;
     if (! board) {
       return;
     }
@@ -442,7 +442,7 @@ export class MvrBoard extends LitElement {
     const rowIndex = this.selectedPanelIndex[0] - 1;
     const colIndex = this.selectedPanelIndex[1] - 1;
     const row = board.items[rowIndex];
-    this._board = {
+    this.srcObject = {
       ...board,
       items: [
         ...(rowIndex === 0 ? [] : board.items.slice(0, rowIndex - 1)),
@@ -460,11 +460,11 @@ export class MvrBoard extends LitElement {
         ...board.items.slice(rowIndex + 1)
       ]
     };
-    this.selectedPanelIndex = rowIndex === 0 ? [rowIndex + 1, colIndex + 1] : [rowIndex, this._board.items[rowIndex - 1].items.length - 1 + colIndex];
+    this.selectedPanelIndex = rowIndex === 0 ? [rowIndex + 1, colIndex + 1] : [rowIndex, this.srcObject.items[rowIndex - 1].items.length - 1 + colIndex];
   }
 
   async #load() {
-    this._board = undefined;
+    this.srcObject = undefined;
     this._error = undefined;
     if (! this.src) {
       return;
@@ -475,7 +475,7 @@ export class MvrBoard extends LitElement {
                       // eslint-disable-next-line no-console
                       console.error(err);
                     });
-    this._board = {
+    this.srcObject = {
       ...board,
       items: board.items.map(item => ({...item, key: crypto.randomUUID()}))
     };
@@ -495,12 +495,12 @@ export class MvrBoard extends LitElement {
   }
 
   #handleHeadingChange(rowIndex: number, colIndex: number, event: CustomEvent) {
-    const {_board: board} = this;
+    const {srcObject: board} = this;
     if (! board) {
       return;
     }
     const row = board.items[rowIndex];
-    this._board = {
+    this.srcObject = {
       ...board,
       items: [
         ...board.items.slice(0, rowIndex),
