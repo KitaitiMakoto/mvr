@@ -18,6 +18,7 @@
     "start": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wds\""
   },
   "dependencies": {
+    "@lit-labs/motion": "^1.0.3",
     "@spectrum-web-components/action-button": "^0.30.0",
     "@spectrum-web-components/action-group": "^0.30.0",
     "@spectrum-web-components/field-label": "^0.30.0",

@@ -1,6 +1,9 @@
 lockfileVersion: '6.0'
 
 dependencies:
+  '@lit-labs/motion':
+    specifier: ^1.0.3
+    version: 1.0.3
   '@spectrum-web-components/action-button':
     specifier: ^0.30.0
     version: 0.30.0
@@ -1695,6 +1698,12 @@ packages:
       '@open-wc/scoped-elements': 2.1.5
       lit: 2.7.4
     dev: true
+
+  /@lit-labs/motion@1.0.3:
+    resolution: {integrity: sha512-y62SxlUTeFtoQTS8/KqAnOnOTdm0FpB23PgFFc99lPj9T5Gg0uktzRmmmqxPaGoNeRg2cLcPpbvK8iEo8CWMoQ==}
+    dependencies:
+      lit: 2.7.4
+    dev: false
 
   /@lit-labs/observers@2.0.0:
     resolution: {integrity: sha512-NMbCjJEqp8V9TpTtt8HhzFVymx/WGpTD7iU+FMKSis4u3iBWwu2UYh6KChwFTEPW9xMum70r2IBnaViBINaGTA==}
