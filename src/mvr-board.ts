@@ -166,15 +166,17 @@ export class MvrBoard extends LitElement {
     super.attributeChangedCallback?.(name, old, value);
     switch (name) {
       case 'src':
-        this.#load();
+        if (value) {
+          this.#load();
+        }
         break;
       default:
     }
   }
 
   protected updated(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-    if (changedProperties.has('_board')) {
-      console.debug(this._board);
+    if (changedProperties.has('_board') && this._board) {
+      localStorage.setItem('board', JSON.stringify(this._board));
     }      
   }
 

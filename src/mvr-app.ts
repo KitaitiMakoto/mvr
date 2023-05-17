@@ -63,10 +63,18 @@ export class MvrApp extends LitElement {
   _$shareDialog!: HTMLDialogElement;
 
   render() {
-    const params = new URL(window.location.href).searchParams;
-    const src = params.get('board');
-    if (! src) {
-      return html`<p>ボードが設定されていません。</p>`;
+    const b = localStorage.getItem('board');
+    let board;
+    if (b) {
+      board = JSON.parse(b);
+    }
+    let src;
+    if (! board) {
+      const params = new URL(window.location.href).searchParams;
+      src = params.get('board');
+      if (! src) {
+        return html`<p>ボードが設定されていません。</p>`;
+      }
     }
 
     return html`
@@ -119,7 +127,7 @@ export class MvrApp extends LitElement {
         <dialog id="share-dialog">
           <textarea .value=${JSON.stringify(this.board, undefined, '  ')}></textarea>
         </dialog>
-        <mvr-board src="${src}" @selectpanel></mvr-board>
+        <mvr-board src="${src}" ._board=${board} @selectpanel></mvr-board>
       </sp-theme>
     `;
   }
