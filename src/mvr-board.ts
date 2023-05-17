@@ -101,6 +101,7 @@ export class MvrBoard extends LitElement {
 
     .divider {
       align-self: stretch;
+      margin-inline: 0.5rem;
       margin-block: 1rem;
       border: none;
       border-inline-end: solid 1px gray;
