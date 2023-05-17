@@ -22,13 +22,16 @@ export class MvrApp extends LitElement {
       position: sticky;
       inset-block-start: 0;
       z-index: 12;
+      padding: 0.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      background-color: #ededed;
     }
 
     .controls {
       display: flex;
       justify-content: space-between;
-      padding: 0.5rem 1rem;
-      background-color: #ededed;
     }
 
     #share-dialog {

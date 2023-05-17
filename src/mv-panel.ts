@@ -83,7 +83,7 @@ export class MvPanel extends LitElement {
     `;
   }
 
-  #handleHeadingChange(event: Event) {
+  #handleHeadingChange() {
     this.dispatchEvent(new CustomEvent('headingchange', {detail: {value: this._$headingInput.value}}));
   }
 }

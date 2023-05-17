@@ -28,6 +28,7 @@ export class MvrBoard extends LitElement {
       --row-direction: row-reverse;
 
       display: block;
+      padding: 0.5rem 1rem;
     }
 
     * {
@@ -45,7 +46,7 @@ export class MvrBoard extends LitElement {
       flex-shrink: 0;
       inline-size: 10rem;
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
       gap: 0.5rem;
       block-size: calc(var(--panel-width, 10vw) * 4 / 3);
     }
@@ -53,6 +54,7 @@ export class MvrBoard extends LitElement {
     .row h2 {
       margin: 0;
       line-height: 1;
+      inline-size: 100%;
     }
 
     .row h2 input {
@@ -61,6 +63,18 @@ export class MvrBoard extends LitElement {
       border: none;
       padding: 0.2rem 0.5rem;
       text-align: center;
+    }
+
+    sp-action-group {
+      inline-size: 100%;
+    }
+
+    .panel-count {
+      inline-size: 100%;
+      text-align: end;
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
     }
 
     .row .items {
@@ -131,6 +145,7 @@ export class MvrBoard extends LitElement {
                 <sp-icon-table-row-remove-center slot="icon"></sp-icon-table-row-remove-center>
               </sp-action-button>
             </sp-action-group>
+            <div class="panel-count">${items.items.length}枚</div>
           </div>
           <div class="items">
             ${repeat(items.items, ({key}) => key, ({name, src, alt, content}, j) => html`
