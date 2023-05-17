@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, query } from 'lit/decorators.js';
+import { customElement, property, query } from 'lit/decorators.js';
 import '@spectrum-web-components/theme/sp-theme.js';
 import '@spectrum-web-components/theme/src/themes.js';
 import '@spectrum-web-components/action-group/sp-action-group.js';
@@ -50,6 +50,9 @@ export class MvrApp extends LitElement {
     }
   `;
 
+  @property({type: Boolean, reflect: true})
+  controls: boolean = false;
+
   @query('#panel-width')
   _$panelWidth!: HTMLInputElement;
 
@@ -76,58 +79,60 @@ export class MvrApp extends LitElement {
 
     return html`
       <sp-theme scale="medium" color="light">
-        <div class="controls-wrapper">
-          <div class="controls">
-            <sp-action-group>
-              <sp-action-button @click=${this.#handleAddText}>
-                <sp-icon-text-add slot="icon"></sp-icon-text-add>
-                テキスト
-              </sp-action-button>
-              <sp-action-button @click=${this.#handleAddRow}>
-                <sp-icon-feed-add slot="icon"></sp-icon-feed-add>
-                行
-              </sp-action-button>
-            </sp-action-group>
-            <sp-action-group>
-              <sp-action-button @click=${this.#handleShare}>
-                <sp-icon-share slot="icon"></sp-icon-share>共有
-              </sp-action-button>
-            </sp-action-group>
-            <sp-action-group>
-              <sp-field-label>パネル幅</sp-field-label>
-              <sp-slider id="panel-width" min="5" value="10" @input=${this.#handlePanelWidthChange} label-visibility="none"></sp-slider>
-            </sp-action-group>
+        ${this.controls ? html`
+          <div class="controls-wrapper">
+            <div class="controls">
+              <sp-action-group>
+                <sp-action-button @click=${this.#handleAddText}>
+                  <sp-icon-text-add slot="icon"></sp-icon-text-add>
+                  テキスト
+                </sp-action-button>
+                <sp-action-button @click=${this.#handleAddRow}>
+                  <sp-icon-feed-add slot="icon"></sp-icon-feed-add>
+                  行
+                </sp-action-button>
+              </sp-action-group>
+              <sp-action-group>
+                <sp-action-button @click=${this.#handleShare}>
+                  <sp-icon-share slot="icon"></sp-icon-share>共有
+                </sp-action-button>
+              </sp-action-group>
+              <sp-action-group>
+                <sp-field-label>パネル幅</sp-field-label>
+                <sp-slider id="panel-width" min="5" value="10" @input=${this.#handlePanelWidthChange} label-visibility="none"></sp-slider>
+              </sp-action-group>
+            </div>
+            <div class="controls">
+              <sp-action-group>
+                <sp-action-button @click=${this.#handleDuplicate}>
+                  複製
+                </sp-action-button>
+                <sp-action-button @click=${this.#handleRemove}>
+                  削除
+                </sp-action-button>
+              </sp-action-group>
+              <sp-action-group>
+                <sp-action-button @click=${this.#handleForward}>
+                  先へ
+                </sp-action-button>
+                <sp-action-button @click=${this.#handleBack}>
+                  後ろへ
+                </sp-action-button>
+              </sp-action-group>
+              <sp-action-group>
+                <sp-action-button @click=${this.#handleBreak}>
+                  折り返す
+                </sp-action-button>
+                <sp-action-button @click=${this.#handleUnbreak}>
+                  ここまで前の行へ
+                </sp-action-button>
+              </sp-action-group>
+            </div>
           </div>
-          <div class="controls">
-            <sp-action-group>
-              <sp-action-button @click=${this.#handleDuplicate}>
-                複製
-              </sp-action-button>
-              <sp-action-button @click=${this.#handleRemove}>
-                削除
-              </sp-action-button>
-            </sp-action-group>
-            <sp-action-group>
-              <sp-action-button @click=${this.#handleForward}>
-                先へ
-              </sp-action-button>
-              <sp-action-button @click=${this.#handleBack}>
-                後ろへ
-              </sp-action-button>
-            </sp-action-group>
-            <sp-action-group>
-              <sp-action-button @click=${this.#handleBreak}>
-                折り返す
-              </sp-action-button>
-              <sp-action-button @click=${this.#handleUnbreak}>
-                ここまで前の行へ
-              </sp-action-button>
-            </sp-action-group>
-          </div>
-        </div>
-        <dialog id="share-dialog">
-          <textarea .value=${JSON.stringify(this._$board?.srcObject ?? '', undefined, '  ')}></textarea>
-        </dialog>
+          <dialog id="share-dialog">
+            <textarea .value=${JSON.stringify(this._$board?.srcObject ?? '', undefined, '  ')}></textarea>
+          </dialog>
+        ` : undefined}
         <mvr-board src="${src}" .srcObject=${board} @selectpanel></mvr-board>
       </sp-theme>
     `;
