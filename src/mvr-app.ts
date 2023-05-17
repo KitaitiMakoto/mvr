@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, query, state } from 'lit/decorators.js';
+import { customElement, query } from 'lit/decorators.js';
 import '@spectrum-web-components/theme/sp-theme.js';
 import '@spectrum-web-components/theme/src/themes.js';
 import '@spectrum-web-components/action-group/sp-action-group.js';
@@ -13,7 +13,7 @@ import '@spectrum-web-components/icons-workflow/icons/sp-icon-folder.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-share.js';
 
 import './mvr-board.js';
-import type {Board, MvrBoard} from './mvr-board.js';
+import type {MvrBoard} from './mvr-board.js';
 
 @customElement('mvr-app')
 export class MvrApp extends LitElement {
