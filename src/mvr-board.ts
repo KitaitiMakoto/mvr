@@ -151,7 +151,7 @@ export class MvrBoard extends LitElement {
             ${repeat(items.items, ({key}) => key, ({name, src, alt, content}, j) => html`
               <div class="item">
                 <mv-panel heading=${name} folio=${j} .selected=${i + 1 === this.selectedPanelIndex?.[0] && j + 1 === this.selectedPanelIndex?.[1]} @focusin="${this.#handleFocusIn}" @headingchange=${(e: CustomEvent) => this.#handleHeadingChange(i, j, e)}>
-                  ${src ? html`<img src=${src} alt=${alt} loading="lazy">` : html`<textarea value=${content}></textarea>`}
+                  ${src ? html`<img src=${src} alt=${alt} loading="lazy">` : html`<textarea .value=${content ?? ''} @change=${(e: Event) => this.#handleContentChange(i, j, (e.currentTarget as HTMLTextAreaElement)?.value)}></textarea>`}
                 </mv-panel>
               </div>
               ${(j % 2 === 1 && j !== items.items.length - 1) ? html`<hr class="divider">` : undefined}
@@ -532,6 +532,32 @@ export class MvrBoard extends LitElement {
           name: (target as HTMLInputElement)?.value
         },
         ...board.items.slice(index + 1)
+      ]
+    };
+  }
+
+  #handleContentChange(rowIndex: number, colIndex: number, content?: string) {
+    const {srcObject: board} = this;
+    if (! board) {
+      return;
+    }
+    const row = board.items[rowIndex];
+    this.srcObject = {
+      ...board,
+      items: [
+        ...board.items.slice(0, rowIndex),
+        {
+          ...row,
+          items: [
+            ...row.items.slice(0, colIndex),
+            {
+              ...row.items[colIndex],
+              content
+            },
+            ...row.items.slice(colIndex + 1)
+          ]
+        },
+        ...board.items.slice(rowIndex + 1)
       ]
     };
   }
