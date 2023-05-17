@@ -13,7 +13,7 @@ export interface Board {
   items: {
     name: string;
     items: {
-      key: `${string}-${string}-${string}-${string}-${string}`,
+      id: `${string}-${string}-${string}-${string}-${string}`,
       name?: string;
       src?: string;
       alt?: string;
@@ -151,7 +151,7 @@ export class MvrBoard extends LitElement {
             <div class="panel-count">${items.items.length}枚</div>
           </div>
           <div class="items">
-            ${repeat(items.items, ({key}) => key, ({name, src, alt, content}, j) => html`
+            ${repeat(items.items, ({id}) => id, ({name, src, alt, content}, j) => html`
               <div class="item" ${animate()}>
                 <mv-panel heading=${name} folio=${j} .selected=${i + 1 === this.selectedPanelIndex?.[0] && j + 1 === this.selectedPanelIndex?.[1]} @focusin="${this.#handleFocusIn}" @headingchange=${(e: CustomEvent) => this.#handleHeadingChange(i, j, e)}>
                   ${src ? html`<img src=${src} alt=${alt} loading="lazy">` : html`<textarea .value=${content ?? ''} @change=${(e: Event) => this.#handleContentChange(i, j, (e.currentTarget as HTMLTextAreaElement)?.value)}></textarea>`}
@@ -206,7 +206,7 @@ export class MvrBoard extends LitElement {
           ...board.items[row],
           items: [
             ...board.items[row].items.slice(0, column + 1),
-            {key: crypto.randomUUID()},
+            {id: crypto.randomUUID()},
             ...board.items[row].items.slice(column + 1)
           ]
         },
@@ -287,7 +287,7 @@ export class MvrBoard extends LitElement {
           ...row,
           items: [
             ...row.items.slice(0, colIndex + 1),
-            {...row.items[colIndex], key: crypto.randomUUID()},
+            {...row.items[colIndex], id: crypto.randomUUID()},
             ...row.items.slice(colIndex + 1)
           ]
         },
@@ -473,15 +473,15 @@ export class MvrBoard extends LitElement {
     if (! this.src) {
       return;
     }
-    const board: Omit<Board, 'key'> = await fetch(this.src).then(res => res.json())
-                    .catch(err => {
-                      this._error = err;
-                      // eslint-disable-next-line no-console
-                      console.error(err);
-                    });
+    const board: Omit<Board, 'id'> = await fetch(this.src).then(res => res.json())
+                                       .catch(err => {
+                                         this._error = err;
+                                         // eslint-disable-next-line no-console
+                                         console.error(err);
+                                       });
     this.srcObject = {
       ...board,
-      items: board.items.map(item => ({...item, key: crypto.randomUUID()}))
+      items: board.items.map(item => ({...item, id: crypto.randomUUID()}))
     };
   }
 

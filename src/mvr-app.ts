@@ -15,6 +15,8 @@ import '@spectrum-web-components/icons-workflow/icons/sp-icon-share.js';
 import './mvr-board.js';
 import type {MvrBoard} from './mvr-board.js';
 
+import './mv-assets.js';
+
 @customElement('mvr-app')
 export class MvrApp extends LitElement {
   static styles = css`
