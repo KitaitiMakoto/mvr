@@ -13,7 +13,7 @@ import '@spectrum-web-components/icons-workflow/icons/sp-icon-folder.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-share.js';
 
 import './mvr-board.js';
-import type {MvrBoard} from './mvr-board.js';
+import type {Board, MvrBoard} from './mvr-board.js';
 
 import './mv-assets.js';
 
@@ -66,9 +66,19 @@ export class MvrApp extends LitElement {
 
   render() {
     const b = localStorage.getItem('board');
-    let board;
+    let board: Board | undefined;
     if (b) {
-      board = JSON.parse(b);
+      const bObj: Board = JSON.parse(b);
+      board = {
+        ...bObj,
+        items: bObj.items.map((item) => ({
+          ...item,
+          items: item.items.map(({id, ...i}) => ({
+            ...i,
+            id: id ?? crypto.randomUUID()
+          }))
+        }))
+      };
     }
     let src;
     if (! board) {
