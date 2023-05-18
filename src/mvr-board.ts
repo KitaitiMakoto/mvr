@@ -481,7 +481,11 @@ export class MvrBoard extends LitElement {
                                        });
     this.srcObject = {
       ...board,
-      items: board.items.map(item => ({...item, id: crypto.randomUUID()}))
+      items: board.items.map(item => ({
+        ...item,
+        id: crypto.randomUUID(),
+        items: item.items.map(({id, ...i}) => ({...i, id: id ?? crypto.randomUUID()}))
+      }))
     };
   }
 
