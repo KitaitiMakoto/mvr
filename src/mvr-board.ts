@@ -117,7 +117,7 @@ export class MvrBoard extends LitElement {
   @property({reflect: true})
   src?: string;
 
-  @property()
+  @state()
   selectedPanelIndex?: [number, number];
 
   @state()
@@ -153,7 +153,7 @@ export class MvrBoard extends LitElement {
           <div class="items">
             ${repeat(items.items, ({id}) => id, ({name, src, alt, content}, j) => html`
               <div class="item" ${animate()}>
-                <mv-panel heading=${name} folio=${j} .selected=${i + 1 === this.selectedPanelIndex?.[0] && j + 1 === this.selectedPanelIndex?.[1]} @focusin="${this.#handleFocusIn}" @headingchange=${(e: CustomEvent) => this.#handleHeadingChange(i, j, e)}>
+                <mv-panel heading=${name} folio=${j} .selected=${i === this.selectedPanelIndex?.[0] && j === this.selectedPanelIndex?.[1]} @focusin="${this.#handleFocusIn}" @headingchange=${(e: CustomEvent) => this.#handleHeadingChange(i, j, e)}>
                   ${src ? html`<img src=${src} alt=${alt} loading="lazy">` : html`<textarea .value=${content ?? ''} @change=${(e: Event) => this.#handleContentChange(i, j, (e.currentTarget as HTMLTextAreaElement)?.value)}></textarea>`}
                 </mv-panel>
               </div>
@@ -195,8 +195,8 @@ export class MvrBoard extends LitElement {
     if (! index) {
       return;
     }
-    const row = index[0] - 1;
-    const column = index[1] - 1;
+    const row = index[0];
+    const column = index[1];
     const {srcObject: board} = this;
     this.srcObject = {
       ...board,
@@ -223,7 +223,7 @@ export class MvrBoard extends LitElement {
     const index = this.selectedPanelIndex;
     const {srcObject: board} = this;
     if (index) {
-      const rowIndex = index[0] - 1;
+      const rowIndex = index[0];
       this.srcObject = {
         ...board,
         items: [
@@ -259,11 +259,11 @@ export class MvrBoard extends LitElement {
     if (! this.selectedPanelIndex) {
       return;
     }
-    const rowIndex = this.selectedPanelIndex[0] - 1;
+    const rowIndex = this.selectedPanelIndex[0];
     if (index === rowIndex) {
       this.selectedPanelIndex = undefined;
     } else if (index < rowIndex) {
-      this.selectedPanelIndex = [rowIndex, this.selectedPanelIndex[1]];
+      this.selectedPanelIndex = [rowIndex - 1, this.selectedPanelIndex[1]];
     }
   }
 
@@ -276,8 +276,8 @@ export class MvrBoard extends LitElement {
       return;
     }
     const {srcObject: board} = this;
-    const rowIndex = index[0] - 1;
-    const colIndex = index[1] - 1;
+    const rowIndex = index[0];
+    const colIndex = index[1];
     const row = board.items[rowIndex];
     this.srcObject = {
       ...board,
@@ -294,7 +294,7 @@ export class MvrBoard extends LitElement {
         ...board.items.slice(rowIndex + 1)
       ]
     };
-    this.selectedPanelIndex = [rowIndex + 1, colIndex + 2];
+    this.selectedPanelIndex = [rowIndex, colIndex + 1];
   }
 
   removePanel() {
@@ -309,8 +309,8 @@ export class MvrBoard extends LitElement {
       return;
     }
     const {srcObject: board} = this;
-    const rowIndex = index[0] - 1;
-    const colIndex = index[1] - 1;
+    const rowIndex = index[0];
+    const colIndex = index[1];
     const row = board.items[rowIndex];
     this.srcObject = {
       ...board,
@@ -337,8 +337,8 @@ export class MvrBoard extends LitElement {
     if (! this.selectedPanelIndex) {
       return;
     }
-    const rowIndex = this.selectedPanelIndex[0] - 1;
-    const colIndex = this.selectedPanelIndex[1] - 1;
+    const rowIndex = this.selectedPanelIndex[0];
+    const colIndex = this.selectedPanelIndex[1];
     const row = board.items[rowIndex];
     if (colIndex >= row.items.length - 1) {
       return;
@@ -359,7 +359,7 @@ export class MvrBoard extends LitElement {
         ...board.items.slice(rowIndex + 1)
       ]
     };
-    this.selectedPanelIndex = [rowIndex + 1, colIndex + 2];
+    this.selectedPanelIndex = [rowIndex, colIndex + 1];
   }
 
   moveBack() {
@@ -370,8 +370,8 @@ export class MvrBoard extends LitElement {
     if (! this.selectedPanelIndex) {
       return;
     }
-    const rowIndex = this.selectedPanelIndex[0] - 1;
-    const colIndex = this.selectedPanelIndex[1] - 1;
+    const rowIndex = this.selectedPanelIndex[0];
+    const colIndex = this.selectedPanelIndex[1];
     if (colIndex === 0) {
       return;
     }
@@ -392,7 +392,7 @@ export class MvrBoard extends LitElement {
         ...board.items.slice(rowIndex + 1)
       ]
     };
-    this.selectedPanelIndex = [rowIndex + 1, colIndex];
+    this.selectedPanelIndex = [rowIndex, colIndex - 1];
   }
 
   break() {
@@ -400,8 +400,8 @@ export class MvrBoard extends LitElement {
     if (! index) {
       return;
     }
-    const rowIndex = index[0] - 1;
-    const colIndex = index[1] - 1;
+    const rowIndex = index[0];
+    const colIndex = index[1];
     const {srcObject: board} = this;
     if (! board) {
       return;
@@ -443,8 +443,8 @@ export class MvrBoard extends LitElement {
     if (! this.selectedPanelIndex) {
       return;
     }
-    const rowIndex = this.selectedPanelIndex[0] - 1;
-    const colIndex = this.selectedPanelIndex[1] - 1;
+    const rowIndex = this.selectedPanelIndex[0];
+    const colIndex = this.selectedPanelIndex[1];
     const row = board.items[rowIndex];
     this.srcObject = {
       ...board,
@@ -495,7 +495,7 @@ export class MvrBoard extends LitElement {
     const column = Array.from(items.querySelectorAll('.item')).findIndex(elem => elem === item);
     const rowElem = items.parentNode!;
     const row = Array.from((rowElem.parentNode as HTMLElement).querySelectorAll('.row')).findIndex(elem => elem === rowElem);
-    this.selectedPanelIndex = [row + 1, column + 1];
+    this.selectedPanelIndex = [row, column];
   }
 
   #handleHeadingChange(rowIndex: number, colIndex: number, event: CustomEvent) {
