@@ -5,13 +5,15 @@ import {customElement, property, query} from 'lit/decorators.js';
 export class MvPanel extends LitElement {
   static styles = css`
     :host {
+      --padding: 1rem;
+
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       inline-size: 100%;
       block-size: 100%;
-      padding: 8%;
+      padding: var(--padding);
       contain: content;
     }
 
@@ -19,7 +21,7 @@ export class MvPanel extends LitElement {
       --border-width: 2px;
 
       border: solid var(--border-width) black;
-      padding: calc(8% - var(--border-width));
+      padding: calc(var(--padding) - var(--border-width));
     }
 
     * {
