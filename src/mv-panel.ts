@@ -75,7 +75,7 @@ export class MvPanel extends LitElement {
 
   render() {
     return html`
-      <h2 class="heading"><input name="heading" .value=${this.heading} placeholder="入力してください" @change=${this.#handleHeadingChange}></h2>
+      <h2 class="heading"><input name="heading" value="${this.heading}" placeholder="入力してください" @change=${this.#handleHeadingChange}></h2>
       <div class="content">
         <slot></slot>
       </div>
