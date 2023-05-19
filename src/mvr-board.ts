@@ -90,7 +90,6 @@ export class MvrBoard extends LitElement {
 
     .row .item {
       inline-size: var(--panel-width, 10vw);
-      aspect-ratio: 3 / 4;
       flex-shrink: 0;
       display: flex;
       justify-content: center;

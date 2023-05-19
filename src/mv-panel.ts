@@ -5,12 +5,12 @@ import {customElement, property, query} from 'lit/decorators.js';
 export class MvPanel extends LitElement {
   static styles = css`
     :host {
-      --padding: 1rem;
+      --padding: 0.2rem;
 
       box-sizing: border-box;
       display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.2rem;
       inline-size: 100%;
       block-size: 100%;
       padding: var(--padding);
@@ -28,13 +28,19 @@ export class MvPanel extends LitElement {
       box-sizing: border-box;
     }
 
+    .heading, .content, .folio {
+      inline-size: 100%;
+    }
+
     .heading {
       margin: 0;
+      line-height: 1;
       text-align: center;
     }
 
     input {
       inline-size: 100%;
+      block-size: 100%;
       border: none;
       background-color: transparent;
       text-align: inherit;
@@ -50,7 +56,9 @@ export class MvPanel extends LitElement {
     }
 
     .folio {
+      align-self: flex-end;
       font-size: small;
+      line-height: 1;
       text-align: center;
       color: gray;
     }

@@ -30,7 +30,7 @@ export const ImagePanel: Story = {
   render: ({selected, heading, folio}) => html`
     <div style="width: 12rem; aspect-ratio: 3 / 4; background-color: #eee;">
       <mv-panel heading="${heading}" folio="${folio}" .selected=${selected}>
-        <img src="/static/media/src/stories/assets/plugin.svg" alt="">
+        <img src="/static/media/src/stories/assets/plugin.svg" alt="" style="border: dashed 1px gray;">
       </mv-panel>
     </div>
   `
