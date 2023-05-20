@@ -1,5 +1,5 @@
-import { LitElement, css, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
+import { LitElement, PropertyValueMap, css, html } from 'lit';
+import { customElement, property, query, state } from 'lit/decorators.js';
 import '@spectrum-web-components/theme/sp-theme.js';
 import '@spectrum-web-components/theme/src/themes.js';
 import '@spectrum-web-components/action-group/sp-action-group.js';
@@ -13,7 +13,7 @@ import '@spectrum-web-components/icons-workflow/icons/sp-icon-folder.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-share.js';
 
 import './mvr-board.js';
-import type {Board, MvrBoard} from './mvr-board.js';
+import type { Board, MvrBoard } from './mvr-board.js';
 
 import './mv-assets.js';
 
@@ -52,8 +52,20 @@ export class MvrApp extends LitElement {
     }
   `;
 
-  @property({type: Boolean, reflect: true})
+  @property({ type: Boolean, reflect: true })
   controls: boolean = false;
+
+  @property({ reflect: true })
+  src = '';
+
+  @property({ type: Object })
+  srcObject?: Board;
+
+  @state()
+  private _error?: string;
+
+  @state()
+  private _selectedPanelIndex?: [number, number];
 
   @query('#panel-width')
   _$panelWidth!: HTMLInputElement;
@@ -65,101 +77,247 @@ export class MvrApp extends LitElement {
   _$shareDialog!: HTMLDialogElement;
 
   render() {
-    const b = localStorage.getItem('board');
-    let board: Board | undefined;
-    if (b) {
-      const bObj: Board = JSON.parse(b);
-      board = {
-        ...bObj,
-        items: bObj.items.map((item) => ({
-          ...item,
-          items: item.items.map(({id, ...i}) => ({
-            ...i,
-            id: id ?? crypto.randomUUID()
-          }))
-        }))
-      };
+    if (this._error) {
+      return html`<p>${this._error}</p>`;
     }
-    let src;
-    if (! board) {
-      const params = new URL(window.location.href).searchParams;
-      src = params.get('board');
-      if (! src) {
-        return html`<p>ボードが設定されていません。</p>`;
-      }
+
+    if (!this.src && !this.srcObject) {
+      return html`<p>ボードが設定されていません</p>`;
+    }
+
+    if (!this.srcObject) {
+      return html`<p>Loading...</p>`;
     }
 
     return html`
       <sp-theme scale="medium" color="light">
-        ${this.controls ? html`
-          <div class="controls-wrapper">
-            <div class="controls">
-              <sp-action-group>
-                <sp-action-button @click=${this.#handleAddText}>
-                  <sp-icon-text-add slot="icon"></sp-icon-text-add>
-                  テキスト
-                </sp-action-button>
-                <sp-action-button @click=${this.#handleAddRow}>
-                  <sp-icon-feed-add slot="icon"></sp-icon-feed-add>
-                  行
-                </sp-action-button>
-              </sp-action-group>
-              <sp-action-group>
-                <sp-action-button @click=${this.#handleShare}>
-                  <sp-icon-share slot="icon"></sp-icon-share>共有
-                </sp-action-button>
-              </sp-action-group>
-              <sp-action-group>
-                <sp-field-label>パネル幅</sp-field-label>
-                <sp-slider id="panel-width" min="5" value="10" @input=${this.#handlePanelWidthChange} label-visibility="none"></sp-slider>
-              </sp-action-group>
-            </div>
-            <div class="controls">
-              <sp-action-group>
-                <sp-action-button @click=${this.#handleDuplicate}>
-                  複製
-                </sp-action-button>
-                <sp-action-button @click=${this.#handleRemove}>
-                  削除
-                </sp-action-button>
-              </sp-action-group>
-              <sp-action-group>
-                <sp-action-button @click=${this.#handleForward}>
-                  先へ
-                </sp-action-button>
-                <sp-action-button @click=${this.#handleBack}>
-                  後ろへ
-                </sp-action-button>
-              </sp-action-group>
-              <sp-action-group>
-                <sp-action-button @click=${this.#handleBreak}>
-                  折り返す
-                </sp-action-button>
-                <sp-action-button @click=${this.#handleUnbreak}>
-                  ここまで前の行へ
-                </sp-action-button>
-              </sp-action-group>
-            </div>
-          </div>
-          <dialog id="share-dialog">
-            <textarea .value=${JSON.stringify(this._$board?.srcObject ?? '', undefined, '  ')}></textarea>
-          </dialog>
-        ` : undefined}
-        <mvr-board src="${src}" .srcObject=${board} @selectpanel></mvr-board>
+        ${this.controls
+          ? html`
+              <div class="controls-wrapper">
+                <div class="controls">
+                  <sp-action-group>
+                    <sp-action-button @click=${this.#handleAddText}>
+                      <sp-icon-text-add slot="icon"></sp-icon-text-add>
+                      テキスト
+                    </sp-action-button>
+                    <sp-action-button @click=${this.#handleAddRow}>
+                      <sp-icon-feed-add slot="icon"></sp-icon-feed-add>
+                      行
+                    </sp-action-button>
+                  </sp-action-group>
+                  <sp-action-group>
+                    <sp-action-button @click=${this.#handleShare}>
+                      <sp-icon-share slot="icon"></sp-icon-share>共有
+                    </sp-action-button>
+                  </sp-action-group>
+                  <sp-action-group>
+                    <sp-field-label>パネル幅</sp-field-label>
+                    <sp-slider
+                      id="panel-width"
+                      min="5"
+                      .value=${Number.parseInt(
+                        this.srcObject.preferences?.panelWidth ?? '10',
+                        10
+                      )}
+                      @input=${this.#handlePanelWidthChange}
+                      label-visibility="none"
+                    ></sp-slider>
+                  </sp-action-group>
+                </div>
+                <div class="controls">
+                  <sp-action-group>
+                    <sp-action-button @click=${this.#handleDuplicate}>
+                      複製
+                    </sp-action-button>
+                    <sp-action-button @click=${this.#handleRemove}>
+                      削除
+                    </sp-action-button>
+                  </sp-action-group>
+                  <sp-action-group>
+                    <sp-action-button @click=${this.#handleForward}>
+                      先へ
+                    </sp-action-button>
+                    <sp-action-button @click=${this.#handleBack}>
+                      後ろへ
+                    </sp-action-button>
+                  </sp-action-group>
+                  <sp-action-group>
+                    <sp-action-button @click=${this.#handleBreak}>
+                      折り返す
+                    </sp-action-button>
+                    <sp-action-button @click=${this.#handleUnbreak}>
+                      ここまで前の行へ
+                    </sp-action-button>
+                  </sp-action-group>
+                </div>
+              </div>
+              <dialog id="share-dialog">
+                <textarea
+                  .value=${JSON.stringify(
+                    this._$board?.srcObject ?? '',
+                    undefined,
+                    '  '
+                  )}
+                ></textarea>
+              </dialog>
+            `
+          : undefined}
+        <mvr-board
+          .srcObject=${this.srcObject}
+          .selectedPanelIndex=${this._selectedPanelIndex}
+          @panelchange=${this.#handlePanelChange}
+          @rowremove=${this.#handleRowRemoved}
+          @panelremoved=${this.#handleRemove}
+          @headingchange=${this.#handleHeadingChange}
+          @rowheadingchange=${this.#handleRowHeadingChange}
+          @contentchange=${this.#handleContentChange}
+        ></mvr-board>
       </sp-theme>
     `;
   }
 
+  attributeChangedCallback(
+    name: string,
+    old: string | null,
+    value: string | null
+  ): void {
+    super.attributeChangedCallback?.(name, old, value);
+    switch (name) {
+      case 'src':
+        this.#load();
+        break;
+      default:
+    }
+  }
+
+  protected updated(
+    changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+  ): void {
+    if (changedProperties.has('srcObject') && this.srcObject) {
+      localStorage.setItem(this.src, JSON.stringify(this.srcObject));
+    }
+  }
+
+  async #load() {
+    this._error = undefined;
+    if (!this.src) {
+      return;
+    }
+    try {
+      const board: Board = await fetch(this.src).then(res => res.json());
+      this.srcObject = {
+        ...board,
+        preferences: board.preferences ?? {
+          panelWidth: '10vw',
+        },
+        items: board.items.map(items => ({
+          ...items,
+          items: items.items.map(({ id, ...i }) => ({
+            ...i,
+            id: id ?? crypto.randomUUID(),
+          })),
+        })),
+      };
+    } catch (err) {
+      this._error = `${err}`;
+      throw err;
+    }
+  }
+
+  // FIXME: Integrate setting custom property and setting and passing srcObject
+  // currently they're separated by performance reason.
   #handlePanelWidthChange() {
-    this._$board?.style.setProperty('--panel-width', `${this._$panelWidth.value}vw`);
+    const panelWidth = `${this._$panelWidth.value}vw`;
+    this._$board?.style.setProperty('--panel-width', panelWidth);
+    const board = this.srcObject;
+    if (!board) {
+      return;
+    }
+    this.srcObject = {
+      ...board,
+      preferences: {
+        ...board.preferences,
+        panelWidth,
+      },
+    };
   }
 
   #handleAddText() {
-    this._$board?.addText();
+    if (!this.srcObject) {
+      return;
+    }
+    const index = this._selectedPanelIndex;
+    if (!index) {
+      return;
+    }
+    const row = index[0];
+    const column = index[1];
+    const { srcObject: board } = this;
+    this.srcObject = {
+      ...board,
+      items: [
+        ...board.items.slice(0, row),
+        {
+          ...board.items[row],
+          items: [
+            ...board.items[row].items.slice(0, column + 1),
+            { id: crypto.randomUUID() },
+            ...board.items[row].items.slice(column + 1),
+          ],
+        },
+        ...board.items.slice(row + 1),
+      ],
+    };
+    this._selectedPanelIndex = [index[0], index[1] + 1];
   }
 
   #handleAddRow() {
-    this._$board?.addRow();
+    if (!this.srcObject) {
+      return;
+    }
+    const index = this._selectedPanelIndex;
+    const { srcObject: board } = this;
+    if (index) {
+      const rowIndex = index[0];
+      this.srcObject = {
+        ...board,
+        items: [
+          ...board.items.slice(0, rowIndex + 1),
+          { name: '', items: [] },
+          ...board.items.slice(rowIndex + 1),
+        ],
+      };
+    } else {
+      this.srcObject = {
+        ...board,
+        items: [...board.items, { name: '', items: [] }],
+      };
+    }
+  }
+
+  #handleRowRemoved(event: CustomEvent) {
+    const { index } = event.detail;
+    const { srcObject: board } = this;
+    if (!board) {
+      return;
+    }
+    const rowName = this.srcObject?.items[index].name || 'この行';
+    if (!window.confirm(`${rowName}を削除していいですか？`)) {
+      return;
+    }
+    this.srcObject = {
+      ...board,
+      items: [...board.items.slice(0, index), ...board.items.slice(index + 1)],
+    };
+    if (!this._selectedPanelIndex) {
+      return;
+    }
+    const rowIndex = this._selectedPanelIndex[0];
+    if (index === rowIndex) {
+      this._selectedPanelIndex = undefined;
+    } else if (index < rowIndex) {
+      this._selectedPanelIndex = [rowIndex - 1, this._selectedPanelIndex[1]];
+    }
   }
 
   #handleShare() {
@@ -168,27 +326,288 @@ export class MvrApp extends LitElement {
   }
 
   #handleDuplicate() {
-    this._$board?.duplicatePanel();
+    if (!this.srcObject) {
+      return;
+    }
+    const index = this._selectedPanelIndex;
+    if (!index) {
+      return;
+    }
+    const { srcObject: board } = this;
+    const rowIndex = index[0];
+    const colIndex = index[1];
+    const row = board.items[rowIndex];
+    this.srcObject = {
+      ...board,
+      items: [
+        ...board.items.slice(0, rowIndex),
+        {
+          ...row,
+          items: [
+            ...row.items.slice(0, colIndex + 1),
+            { ...row.items[colIndex], id: crypto.randomUUID() },
+            ...row.items.slice(colIndex + 1),
+          ],
+        },
+        ...board.items.slice(rowIndex + 1),
+      ],
+    };
+    this._selectedPanelIndex = [rowIndex, colIndex + 1];
+    // this._$board?.duplicatePanel();
   }
 
   #handleRemove() {
-    this._$board?.removePanel();
+    if (!this.srcObject) {
+      return;
+    }
+    const index = this._selectedPanelIndex;
+    if (!index) {
+      return;
+    }
+    if (!window.confirm('選択したパネルを削除しますか？')) {
+      return;
+    }
+    const { srcObject: board } = this;
+    const rowIndex = index[0];
+    const colIndex = index[1];
+    const row = board.items[rowIndex];
+    this.srcObject = {
+      ...board,
+      items: [
+        ...board.items.slice(0, rowIndex),
+        {
+          ...row,
+          items: [
+            ...row.items.slice(0, colIndex),
+            ...row.items.slice(colIndex + 1),
+          ],
+        },
+        ...board.items.slice(rowIndex + 1),
+      ],
+    };
+    this._selectedPanelIndex = undefined;
   }
 
   #handleForward() {
-    this._$board?.moveForward();
+    const { srcObject: board } = this;
+    if (!board) {
+      return;
+    }
+    if (!this._selectedPanelIndex) {
+      return;
+    }
+    const rowIndex = this._selectedPanelIndex[0];
+    const colIndex = this._selectedPanelIndex[1];
+    const row = board.items[rowIndex];
+    if (colIndex >= row.items.length - 1) {
+      return;
+    }
+    this.srcObject = {
+      ...board,
+      items: [
+        ...board.items.slice(0, rowIndex),
+        {
+          ...row,
+          items: [
+            ...row.items.slice(0, colIndex),
+            row.items[colIndex + 1],
+            row.items[colIndex],
+            ...row.items.slice(colIndex + 2),
+          ],
+        },
+        ...board.items.slice(rowIndex + 1),
+      ],
+    };
+    this._selectedPanelIndex = [rowIndex, colIndex + 1];
   }
 
   #handleBack() {
-    this._$board?.moveBack();
+    const { srcObject: board } = this;
+    if (!board) {
+      return;
+    }
+    if (!this._selectedPanelIndex) {
+      return;
+    }
+    const rowIndex = this._selectedPanelIndex[0];
+    const colIndex = this._selectedPanelIndex[1];
+    if (colIndex === 0) {
+      return;
+    }
+    const row = board.items[rowIndex];
+    this.srcObject = {
+      ...board,
+      items: [
+        ...board.items.slice(0, rowIndex),
+        {
+          ...row,
+          items: [
+            ...row.items.slice(0, colIndex - 1),
+            row.items[colIndex],
+            row.items[colIndex - 1],
+            ...row.items.slice(colIndex + 1),
+          ],
+        },
+        ...board.items.slice(rowIndex + 1),
+      ],
+    };
+    this._selectedPanelIndex = [rowIndex, colIndex - 1];
   }
 
   #handleBreak() {
-    this._$board?.break();
+    const index = this._selectedPanelIndex;
+    if (!index) {
+      return;
+    }
+    const rowIndex = index[0];
+    const colIndex = index[1];
+    const { srcObject: board } = this;
+    if (!board) {
+      return;
+    }
+    if (rowIndex === board.items.length - 1) {
+      this.#handleAddRow();
+    }
+    const row = board.items[rowIndex];
+    if (colIndex >= row.items.length - 1) {
+      return;
+    }
+    this.srcObject = {
+      ...board,
+      items: [
+        ...board.items.slice(0, rowIndex),
+        {
+          ...row,
+          items: [...row.items.slice(0, colIndex + 1)],
+        },
+        {
+          ...board.items[rowIndex + 1],
+          items: [
+            ...row.items.slice(colIndex + 1),
+            ...board.items[rowIndex + 1].items,
+          ],
+        },
+        ...board.items.slice(rowIndex + 2),
+      ],
+    };
   }
 
   #handleUnbreak() {
-    this._$board?.unbreak();
+    const { srcObject: board } = this;
+    if (!board) {
+      return;
+    }
+    if (!this._selectedPanelIndex) {
+      return;
+    }
+    const rowIndex = this._selectedPanelIndex[0];
+    const colIndex = this._selectedPanelIndex[1];
+    const row = board.items[rowIndex];
+    this.srcObject = {
+      ...board,
+      items: [
+        ...(rowIndex === 0 ? [] : board.items.slice(0, rowIndex - 1)),
+        {
+          ...board.items[rowIndex - 1],
+          items: [
+            ...(board.items[rowIndex - 1]?.items ?? []),
+            ...row.items.slice(0, colIndex + 1),
+          ],
+        },
+        {
+          ...row,
+          items: row.items.slice(colIndex + 1),
+        },
+        ...board.items.slice(rowIndex + 1),
+      ],
+    };
+    this._selectedPanelIndex =
+      rowIndex === 0
+        ? [rowIndex + 1, colIndex + 1]
+        : [
+            rowIndex,
+            this.srcObject.items[rowIndex - 1].items.length - 1 + colIndex,
+          ];
+  }
+
+  #handlePanelChange(event: CustomEvent) {
+    this._selectedPanelIndex = event.detail.index;
+  }
+
+  #handleHeadingChange(event: CustomEvent) {
+    const {
+      value,
+      index: [rowIndex, colIndex],
+    } = event.detail;
+    const { srcObject: board } = this;
+    if (!board) {
+      return;
+    }
+    const row = board.items[rowIndex];
+    this.srcObject = {
+      ...board,
+      items: [
+        ...board.items.slice(0, rowIndex),
+        {
+          ...row,
+          items: [
+            ...row.items.slice(0, colIndex),
+            { ...row.items[colIndex], name: value },
+            ...row.items.slice(colIndex + 1),
+          ],
+        },
+        ...board.items.slice(rowIndex + 1),
+      ],
+    };
+  }
+
+  #handleRowHeadingChange(event: CustomEvent) {
+    const { value, index } = event.detail;
+    const { srcObject: board } = this;
+    if (!board) {
+      return;
+    }
+    this.srcObject = {
+      ...board,
+      items: [
+        ...board.items.slice(0, index),
+        {
+          ...board.items[index],
+          name: value,
+        },
+        ...board.items.slice(index + 1),
+      ],
+    };
+  }
+
+  #handleContentChange(event: CustomEvent) {
+    const {
+      content,
+      index: [rowIndex, colIndex],
+    } = event.detail;
+    const { srcObject: board } = this;
+    if (!board) {
+      return;
+    }
+    const row = board.items[rowIndex];
+    this.srcObject = {
+      ...board,
+      items: [
+        ...board.items.slice(0, rowIndex),
+        {
+          ...row,
+          items: [
+            ...row.items.slice(0, colIndex),
+            {
+              ...row.items[colIndex],
+              content,
+            },
+            ...row.items.slice(colIndex + 1),
+          ],
+        },
+        ...board.items.slice(rowIndex + 1),
+      ],
+    };
   }
 }
 

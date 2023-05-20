@@ -1,7 +1,7 @@
-import {LitElement, PropertyValueMap, css, html} from 'lit';
-import {property, customElement, state} from 'lit/decorators.js';
-import {repeat} from 'lit/directives/repeat.js';
-import {animate} from '@lit-labs/motion';
+import { LitElement, css, html } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
+import { repeat } from 'lit/directives/repeat.js';
+import { animate } from '@lit-labs/motion';
 
 import '@spectrum-web-components/action-group/sp-action-group.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-table-row-remove-center.js';
@@ -10,16 +10,19 @@ import '@spectrum-web-components/icons-workflow/icons/sp-icon-home.js';
 import './mv-panel.js';
 
 export interface Board {
+  preferences?: {
+    panelWidth: string;
+  };
   items: {
     name: string;
     items: {
-      id: `${string}-${string}-${string}-${string}-${string}`,
+      id: `${string}-${string}-${string}-${string}-${string}`;
       name?: string;
       src?: string;
       alt?: string;
       content?: string;
-    }[]
-  }[]
+    }[];
+  }[];
 }
 
 @customElement('mvr-board')
@@ -113,459 +116,143 @@ export class MvrBoard extends LitElement {
     }
   `;
 
-  @property({reflect: true})
-  src?: string;
-
   @state()
   selectedPanelIndex?: [number, number];
 
   @state()
   srcObject?: Board;
 
-  @state()
-  private _error?: string;
-
   render() {
-    if (this._error) {
-      return html`<p>${this._error}</p>`;
-    }
-
-    if (! this.srcObject) {
+    if (!this.srcObject) {
       return html`<p>Loading...</p>`;
     }
 
     return html`
-      ${this.srcObject.items.map((items, i) => html`
-        <div class="row">
-          <div class="header">
-            <h2><input .value="${items.name}" placeholder="入力してください" @change=${(e: Event) => this.#handleRowHeadingChange(i, e.currentTarget)}></h2>
-            <sp-action-group>
-              <sp-action-button aria-label="行を先頭に戻す" @click=${() => this.goHome(i)}>
-                <sp-icon-home slot="icon"></sp-icon-home>
-              </sp-action-button>
-              <sp-action-button aria-label="行を削除" @click=${() => this.removeRow(i)}>
-                <sp-icon-table-row-remove-center slot="icon"></sp-icon-table-row-remove-center>
-              </sp-action-button>
-            </sp-action-group>
-            <div class="panel-count">${items.items.length}枚</div>
+      ${this.srcObject.items.map(
+        (items, i) => html`
+          <div class="row">
+            <div class="header">
+              <h2>
+                <input
+                  .value="${items.name}"
+                  placeholder="入力してください"
+                  @change=${(e: Event) =>
+                    this.#handleRowHeadingChange(i, e.currentTarget)}
+                />
+              </h2>
+              <sp-action-group>
+                <sp-action-button
+                  aria-label="行を先頭に戻す"
+                  @click=${() => this.goHome(i)}
+                >
+                  <sp-icon-home slot="icon"></sp-icon-home>
+                </sp-action-button>
+                <sp-action-button
+                  aria-label="行を削除"
+                  @click=${() => this.removeRow(i)}
+                >
+                  <sp-icon-table-row-remove-center
+                    slot="icon"
+                  ></sp-icon-table-row-remove-center>
+                </sp-action-button>
+              </sp-action-group>
+              <div class="panel-count">${items.items.length}枚</div>
+            </div>
+            <div class="items">
+              ${repeat(
+                items.items,
+                ({ id }) => id,
+                ({ name, src, alt, content }, j) => html`
+                  <div class="item" ${animate()}>
+                    <mv-panel
+                      heading=${name}
+                      folio=${j}
+                      .selected=${i === this.selectedPanelIndex?.[0] &&
+                      j === this.selectedPanelIndex?.[1]}
+                      @focusin="${this.#handleFocusIn}"
+                      @headingchange=${(e: CustomEvent) =>
+                        this.#handleHeadingChange(i, j, e)}
+                    >
+                      ${src
+                        ? html`<img src=${src} alt=${alt} loading="lazy" />`
+                        : html`<textarea
+                            .value=${content ?? ''}
+                            @change=${(e: Event) =>
+                              this.#handleContentChange(
+                                i,
+                                j,
+                                (e.currentTarget as HTMLTextAreaElement)?.value
+                              )}
+                          ></textarea>`}
+                    </mv-panel>
+                  </div>
+                  ${j % 2 === 1 && j !== items.items.length - 1
+                    ? html`<hr class="divider" />`
+                    : undefined}
+                `
+              )}
+            </div>
           </div>
-          <div class="items">
-            ${repeat(items.items, ({id}) => id, ({name, src, alt, content}, j) => html`
-              <div class="item" ${animate()}>
-                <mv-panel heading=${name} folio=${j} .selected=${i === this.selectedPanelIndex?.[0] && j === this.selectedPanelIndex?.[1]} @focusin="${this.#handleFocusIn}" @headingchange=${(e: CustomEvent) => this.#handleHeadingChange(i, j, e)}>
-                  ${src ? html`<img src=${src} alt=${alt} loading="lazy">` : html`<textarea .value=${content ?? ''} @change=${(e: Event) => this.#handleContentChange(i, j, (e.currentTarget as HTMLTextAreaElement)?.value)}></textarea>`}
-                </mv-panel>
-              </div>
-              ${(j % 2 === 1 && j !== items.items.length - 1) ? html`<hr class="divider">` : undefined}
-            `)}
-          </div>
-        </div>
-      `)}
+        `
+      )}
     `;
   }
 
-  attributeChangedCallback(name: string, old: string | null, value: string | null): void {
-    super.attributeChangedCallback?.(name, old, value);
-    switch (name) {
-      case 'src':
-        if (value) {
-          this.#load();
-        }
-        break;
-      default:
-    }
-  }
-
-  protected updated(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-    if (changedProperties.has('srcObject') && this.srcObject) {
-      localStorage.setItem('board', JSON.stringify(this.srcObject));
-    }      
-  }
-
   goHome(i: number) {
-    this.renderRoot.querySelector(`.row:nth-child(${i + 1}) .item:first-child`)?.scrollIntoView({block: 'center', inline: 'start'});
-  }
-
-  addText() {
-    if (! this.srcObject) {
-      return;
-    }
-    const index = this.selectedPanelIndex;
-    if (! index) {
-      return;
-    }
-    const row = index[0];
-    const column = index[1];
-    const {srcObject: board} = this;
-    this.srcObject = {
-      ...board,
-      items: [
-        ...board.items.slice(0, row),
-        {
-          ...board.items[row],
-          items: [
-            ...board.items[row].items.slice(0, column + 1),
-            {id: crypto.randomUUID()},
-            ...board.items[row].items.slice(column + 1)
-          ]
-        },
-        ...board.items.slice(row + 1)
-      ]
-    };
-    this.selectedPanelIndex = [index[0], index[1] + 1];
-  }
-
-  addRow() {
-    if (! this.srcObject) {
-      return;
-    }
-    const index = this.selectedPanelIndex;
-    const {srcObject: board} = this;
-    if (index) {
-      const rowIndex = index[0];
-      this.srcObject = {
-        ...board,
-        items: [
-          ...board.items.slice(0, rowIndex + 1),
-          {name: '', items: []},
-          ...board.items.slice(rowIndex + 1)
-        ]
-      };
-    } else {
-      this.srcObject = {
-        ...board,
-        items: [...board.items, {name: '', items: []}]
-      };
-    }
+    this.renderRoot
+      .querySelector(`.row:nth-child(${i + 1}) .item:first-child`)
+      ?.scrollIntoView({ block: 'center', inline: 'start' });
   }
 
   removeRow(index: number) {
-    const {srcObject: board} = this;
-    if (! board) {
-      return;
-    }
-    const rowName = this.srcObject?.items[index].name || 'この行';
-    if (! window.confirm(`${rowName}を削除していいですか？`)) {
-      return;
-    }
-    this.srcObject = {
-      ...board,
-      items: [
-        ...board.items.slice(0, index),
-        ...board.items.slice(index + 1)
-      ]
-    };
-    if (! this.selectedPanelIndex) {
-      return;
-    }
-    const rowIndex = this.selectedPanelIndex[0];
-    if (index === rowIndex) {
-      this.selectedPanelIndex = undefined;
-    } else if (index < rowIndex) {
-      this.selectedPanelIndex = [rowIndex - 1, this.selectedPanelIndex[1]];
-    }
-  }
-
-  duplicatePanel() {
-    if (! this.srcObject) {
-      return;
-    }
-    const index = this.selectedPanelIndex;
-    if (! index) {
-      return;
-    }
-    const {srcObject: board} = this;
-    const rowIndex = index[0];
-    const colIndex = index[1];
-    const row = board.items[rowIndex];
-    this.srcObject = {
-      ...board,
-      items: [
-        ...board.items.slice(0, rowIndex),
-        {
-          ...row,
-          items: [
-            ...row.items.slice(0, colIndex + 1),
-            {...row.items[colIndex], id: crypto.randomUUID()},
-            ...row.items.slice(colIndex + 1)
-          ]
-        },
-        ...board.items.slice(rowIndex + 1)
-      ]
-    };
-    this.selectedPanelIndex = [rowIndex, colIndex + 1];
+    this.dispatchEvent(new CustomEvent('rowremoved', { detail: { index } }));
   }
 
   removePanel() {
-    if (! this.srcObject) {
-      return;
-    }
-    const index = this.selectedPanelIndex;
-    if (! index) {
-      return;
-    }
-    if (! window.confirm('選択したパネルを削除しますか？')) {
-      return;
-    }
-    const {srcObject: board} = this;
-    const rowIndex = index[0];
-    const colIndex = index[1];
-    const row = board.items[rowIndex];
-    this.srcObject = {
-      ...board,
-      items: [
-        ...board.items.slice(0, rowIndex),
-        {
-          ...row,
-          items: [
-            ...row.items.slice(0, colIndex),
-            ...row.items.slice(colIndex + 1)
-          ]
-        },
-        ...board.items.slice(rowIndex + 1)
-      ]
-    };
-    this.selectedPanelIndex = undefined;
-  }
-
-  moveForward() {
-    const {srcObject: board} = this;
-    if (! board) {
-      return;
-    }
-    if (! this.selectedPanelIndex) {
-      return;
-    }
-    const rowIndex = this.selectedPanelIndex[0];
-    const colIndex = this.selectedPanelIndex[1];
-    const row = board.items[rowIndex];
-    if (colIndex >= row.items.length - 1) {
-      return;
-    }
-    this.srcObject = {
-      ...board,
-      items: [
-        ...board.items.slice(0, rowIndex),
-        {
-          ...row,
-          items: [
-            ...row.items.slice(0, colIndex),
-            row.items[colIndex + 1],
-            row.items[colIndex],
-            ...row.items.slice(colIndex + 2)
-          ]
-        },
-        ...board.items.slice(rowIndex + 1)
-      ]
-    };
-    this.selectedPanelIndex = [rowIndex, colIndex + 1];
-  }
-
-  moveBack() {
-    const {srcObject: board} = this;
-    if (! board) {
-      return;
-    }
-    if (! this.selectedPanelIndex) {
-      return;
-    }
-    const rowIndex = this.selectedPanelIndex[0];
-    const colIndex = this.selectedPanelIndex[1];
-    if (colIndex === 0) {
-      return;
-    }
-    const row = board.items[rowIndex];
-    this.srcObject = {
-      ...board,
-      items: [
-        ...board.items.slice(0, rowIndex),
-        {
-          ...row,
-          items: [
-            ...row.items.slice(0, colIndex - 1),
-            row.items[colIndex],
-            row.items[colIndex - 1],
-            ...row.items.slice(colIndex + 1)
-          ]
-        },
-        ...board.items.slice(rowIndex + 1)
-      ]
-    };
-    this.selectedPanelIndex = [rowIndex, colIndex - 1];
-  }
-
-  break() {
-    const index = this.selectedPanelIndex;
-    if (! index) {
-      return;
-    }
-    const rowIndex = index[0];
-    const colIndex = index[1];
-    const {srcObject: board} = this;
-    if (! board) {
-      return;
-    }
-    if (rowIndex === board.items.length - 1) {
-      this.addRow();
-    }
-    const row = board.items[rowIndex];
-    if (colIndex >= row.items.length - 1) {
-      return;
-    }
-    this.srcObject = {
-      ...board,
-      items: [
-        ...board.items.slice(0, rowIndex),
-        {
-          ...row,
-          items: [
-            ...row.items.slice(0, colIndex + 1)
-          ]
-        },
-        {
-          ...board.items[rowIndex + 1],
-          items: [
-            ...row.items.slice(colIndex + 1),
-            ...board.items[rowIndex + 1].items
-          ]
-        },
-        ...board.items.slice(rowIndex + 2)
-      ]
-    };
-  }
-
-  unbreak() {
-    const {srcObject: board} = this;
-    if (! board) {
-      return;
-    }
-    if (! this.selectedPanelIndex) {
-      return;
-    }
-    const rowIndex = this.selectedPanelIndex[0];
-    const colIndex = this.selectedPanelIndex[1];
-    const row = board.items[rowIndex];
-    this.srcObject = {
-      ...board,
-      items: [
-        ...(rowIndex === 0 ? [] : board.items.slice(0, rowIndex - 1)),
-        {
-          ...board.items[rowIndex - 1],
-          items: [
-            ...(board.items[rowIndex - 1]?.items ?? []),
-            ...row.items.slice(0, colIndex + 1)
-          ]
-        },
-        {
-          ...row,
-          items: row.items.slice(colIndex + 1)
-        },
-        ...board.items.slice(rowIndex + 1)
-      ]
-    };
-    this.selectedPanelIndex = rowIndex === 0 ? [rowIndex + 1, colIndex + 1] : [rowIndex, this.srcObject.items[rowIndex - 1].items.length - 1 + colIndex];
-  }
-
-  async #load() {
-    this.srcObject = undefined;
-    this._error = undefined;
-    if (! this.src) {
-      return;
-    }
-    const board: Omit<Board, 'id'> = await fetch(this.src).then(res => res.json())
-                                       .catch(err => {
-                                         this._error = err;
-                                         // eslint-disable-next-line no-console
-                                         console.error(err);
-                                       });
-    this.srcObject = {
-      ...board,
-      items: board.items.map(item => ({
-        ...item,
-        id: crypto.randomUUID(),
-        items: item.items.map(({id, ...i}) => ({...i, id: id ?? crypto.randomUUID()}))
-      }))
-    };
+    this.dispatchEvent(new Event('panelremoved'));
   }
 
   #handleFocusIn(event: FocusEvent) {
-    const panel = event.composedPath().find(elem => (elem as HTMLElement).tagName === 'MV-PANEL');
-    if (! panel) {
+    const panel = event.currentTarget;
+    if (!panel) {
       return;
     }
     const item = (panel as HTMLElement).closest('.item')!;
     const items = item.parentNode as HTMLElement;
-    const column = Array.from(items.querySelectorAll('.item')).findIndex(elem => elem === item);
+    const column = Array.from(items.querySelectorAll('.item')).findIndex(
+      elem => elem === item
+    );
     const rowElem = items.parentNode!;
-    const row = Array.from((rowElem.parentNode as HTMLElement).querySelectorAll('.row')).findIndex(elem => elem === rowElem);
-    this.selectedPanelIndex = [row, column];
+    const row = Array.from(
+      (rowElem.parentNode as HTMLElement).querySelectorAll('.row')
+    ).findIndex(elem => elem === rowElem);
+    this.dispatchEvent(
+      new CustomEvent('panelchange', { detail: { index: [row, column] } })
+    );
   }
 
   #handleHeadingChange(rowIndex: number, colIndex: number, event: CustomEvent) {
-    const {srcObject: board} = this;
-    if (! board) {
-      return;
-    }
-    const row = board.items[rowIndex];
-    this.srcObject = {
-      ...board,
-      items: [
-        ...board.items.slice(0, rowIndex),
-        {
-          ...row,
-          items: [
-            ...row.items.slice(0, colIndex),
-            {...row.items[colIndex], name: event.detail.value},
-            ...row.items.slice(colIndex + 1)
-          ]
-        },
-        ...board.items.slice(rowIndex + 1)
-      ]
-    };
+    this.dispatchEvent(
+      new CustomEvent('headingchange', {
+        detail: { value: event.detail.value, index: [rowIndex, colIndex] },
+      })
+    );
   }
 
   #handleRowHeadingChange(index: number, target: EventTarget | null) {
-    const {srcObject: board} = this;
-    if (! board) {
-      return;
-    }
-    this.srcObject = {
-      ...board,
-      items: [
-        ...board.items.slice(0, index),
-        {
-          ...board.items[index],
-          name: (target as HTMLInputElement)?.value
-        },
-        ...board.items.slice(index + 1)
-      ]
-    };
+    this.dispatchEvent(
+      new CustomEvent('rowheadingchange', {
+        detail: { value: (target as HTMLInputElement)?.value, index },
+      })
+    );
   }
 
   #handleContentChange(rowIndex: number, colIndex: number, content?: string) {
-    const {srcObject: board} = this;
-    if (! board) {
-      return;
-    }
-    const row = board.items[rowIndex];
-    this.srcObject = {
-      ...board,
-      items: [
-        ...board.items.slice(0, rowIndex),
-        {
-          ...row,
-          items: [
-            ...row.items.slice(0, colIndex),
-            {
-              ...row.items[colIndex],
-              content
-            },
-            ...row.items.slice(colIndex + 1)
-          ]
-        },
-        ...board.items.slice(rowIndex + 1)
-      ]
-    };
+    this.dispatchEvent(
+      new CustomEvent('contentchange', {
+        detail: { content, index: [rowIndex, colIndex] },
+      })
+    );
   }
 }
 

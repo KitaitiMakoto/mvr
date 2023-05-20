@@ -27,6 +27,10 @@
   </main>
 
   <script type="module" src="./out-tsc/src/mvr-app.js"></script>
+  <script type="module">
+    const board = new URL(location.href).searchParams.get('board');
+    document.getElementsByTagName('mvr-app')[0].src = board;
+  </script>
 </body>
 
 </html>
