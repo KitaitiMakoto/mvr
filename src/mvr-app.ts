@@ -204,7 +204,23 @@ export class MvrApp extends LitElement {
       return;
     }
     try {
-      const board: Board = await fetch(this.src).then(res => res.json());
+      let board: Board | undefined;
+      const cache = await new Promise<string | null>(resolve => {
+        resolve(localStorage.getItem(this.src));
+      });
+      if (cache) {
+        try {
+          board = JSON.parse(cache);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      if (!board) {
+        board = await fetch(this.src).then(res => res.json());
+      }
+      if (!board) {
+        return;
+      }
       this.srcObject = {
         ...board,
         preferences: board.preferences ?? {
