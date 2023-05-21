@@ -1,4 +1,4 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, PropertyValueMap, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { animate } from '@lit-labs/motion';
@@ -196,6 +196,17 @@ export class MvrBoard extends LitElement {
         `
       )}
     `;
+  }
+
+  protected updated(
+    changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+  ): void {
+    if (changedProperties.has('srcObject') && this.srcObject) {
+      this.style.setProperty(
+        '--panel-width',
+        this.srcObject.preferences?.panelWidth ?? '10vw'
+      );
+    }
   }
 
   goHome(i: number) {
