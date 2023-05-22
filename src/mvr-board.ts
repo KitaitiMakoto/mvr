@@ -216,7 +216,8 @@ export class MvrBoard extends LitElement {
   }
 
   removeRow(index: number) {
-    this.dispatchEvent(new CustomEvent('rowremoved', { detail: { index } }));
+    console.debug(index);
+    this.dispatchEvent(new CustomEvent('removerow', { detail: { index } }));
   }
 
   removePanel() {

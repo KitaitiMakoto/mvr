@@ -166,7 +166,7 @@ export class MvrApp extends LitElement {
           .srcObject=${this.srcObject}
           .selectedPanelIndex=${this._selectedPanelIndex}
           @panelchange=${this.#handlePanelChange}
-          @rowremove=${this.#handleRowRemoved}
+          @removerow=${this.#handleRemoveRow}
           @panelremoved=${this.#handleRemove}
           @headingchange=${this.#handleHeadingChange}
           @rowheadingchange=${this.#handleRowHeadingChange}
@@ -311,7 +311,7 @@ export class MvrApp extends LitElement {
     }
   }
 
-  #handleRowRemoved(event: CustomEvent) {
+  #handleRemoveRow(event: CustomEvent) {
     const { index } = event.detail;
     const { srcObject: board } = this;
     if (!board) {
