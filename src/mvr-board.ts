@@ -114,6 +114,23 @@ export class MvrBoard extends LitElement {
     mv-panel {
       background-color: #fafafa;
     }
+
+    mv-panel:hover::after {
+      content: attr(data-src);
+      position: absolute;
+      inset-block-end: 0;
+      inset-inline: 0;
+      display: block;
+      box-sizing: border-box;
+      inline-size: 100%;
+      padding: 0.5rem;
+      background-color: rgba(200, 200, 200, 0.5);
+      color: black;
+    }
+
+    mv-panel[data-src='']:hover::after {
+      display: none;
+    }
   `;
 
   @state()
@@ -172,6 +189,7 @@ export class MvrBoard extends LitElement {
                       @focusin="${this.#handleFocusIn}"
                       @headingchange=${(e: CustomEvent) =>
                         this.#handleHeadingChange(i, j, e)}
+                      data-src=${(src ?? '').split('/').at(-1)}
                     >
                       ${src
                         ? html`<img src=${src} alt=${alt} loading="lazy" />`
