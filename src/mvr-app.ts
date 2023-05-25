@@ -204,7 +204,7 @@ export class MvrApp extends LitElement {
     changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ): void {
     if (changedProperties.has('srcObject') && this.srcObject) {
-      saveBoard(this.src, this.srcObject);
+      saveBoard(this.srcObject);
     }
   }
 
@@ -215,7 +215,7 @@ export class MvrApp extends LitElement {
     }
     try {
       let board: Board | undefined;
-      board = await loadBoard(this.src);
+      board = await loadBoard(this.src as Board['id']);
       if (!board) {
         board = await fetch(this.src).then(res => res.json());
       }
