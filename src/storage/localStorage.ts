@@ -12,3 +12,7 @@ export async function loadBoard(key: string): Promise<Board | undefined> {
     return undefined;
   }
 }
+
+export async function saveBoard(key: string, board: Board) {
+  localStorage.setItem(key, JSON.stringify(board));
+}

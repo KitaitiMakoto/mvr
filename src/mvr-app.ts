@@ -16,7 +16,7 @@ import './mvr-board.js';
 import type { Board, MvrBoard } from './mvr-board.js';
 
 import './mv-assets.js';
-import { loadBoard } from './storage/localStorage.js';
+import { loadBoard, saveBoard } from './storage/localStorage.js';
 
 @customElement('mvr-app')
 export class MvrApp extends LitElement {
@@ -204,7 +204,7 @@ export class MvrApp extends LitElement {
     changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ): void {
     if (changedProperties.has('srcObject') && this.srcObject) {
-      localStorage.setItem(this.src, JSON.stringify(this.srcObject));
+      saveBoard(this.src, this.srcObject);
     }
   }
 
