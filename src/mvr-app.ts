@@ -236,6 +236,9 @@ export class MvrApp extends LitElement {
           })),
         })),
       };
+      const url = new URL(window.location.href);
+      url.searchParams.set('board', this.srcObject.id);
+      window.history.replaceState(null, '', url);
     } catch (err) {
       this._error = `${err}`;
       throw err;
