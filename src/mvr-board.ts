@@ -54,6 +54,11 @@ export class MvrBoard extends LitElement {
       align-content: flex-start;
       gap: 0.5rem;
       block-size: calc(var(--panel-width, 10vw) * 4 / 3);
+      transition: width 200ms;
+    }
+
+    .header[aria-expanded='false'] {
+      inline-size: 32px; /* FIXME */
     }
 
     .row h2 {
@@ -139,6 +144,9 @@ export class MvrBoard extends LitElement {
   @state()
   srcObject?: Board;
 
+  @state()
+  rowHeaderExpanded: Boolean = true;
+
   render() {
     if (!this.srcObject) {
       return html`<p>Loading...</p>`;
@@ -148,7 +156,10 @@ export class MvrBoard extends LitElement {
       ${this.srcObject.items.map(
         (items, i) => html`
           <div class="row">
-            <div class="header">
+            <div
+              class="header"
+              aria-expanded="${this.rowHeaderExpanded ? 'true' : 'false'}"
+            >
               <h2>
                 <input
                   .value="${items.name}"
@@ -240,6 +251,14 @@ export class MvrBoard extends LitElement {
 
   removePanel() {
     this.dispatchEvent(new Event('panelremoved'));
+  }
+
+  toggleRowHeader(value?: Boolean) {
+    if (value === undefined) {
+      this.rowHeaderExpanded = !this.rowHeaderExpanded;
+    } else {
+      this.rowHeaderExpanded = value;
+    }
   }
 
   #handleFocusIn(event: FocusEvent) {

@@ -67,6 +67,9 @@ export class MvrApp extends LitElement {
   @state()
   private _selectedPanelIndex?: [number, number];
 
+  @state()
+  private _rowHeaderExpanded: Boolean = true;
+
   @query('#panel-width')
   _$panelWidth!: HTMLInputElement;
 
@@ -149,6 +152,11 @@ export class MvrApp extends LitElement {
                       ここまで前の行へ
                     </sp-action-button>
                   </sp-action-group>
+                  <sp-action-group>
+                    <sp-action-button @click=${this.#handleToggleRowHeader}>
+                      ${this._rowHeaderExpanded ? '縮小' : '拡大'}
+                    </sp-action-button>
+                  </sp-action-group>
                 </div>
               </div>
               <dialog id="share-dialog">
@@ -165,6 +173,7 @@ export class MvrApp extends LitElement {
         <mvr-board
           .srcObject=${this.srcObject}
           .selectedPanelIndex=${this._selectedPanelIndex}
+          .rowHeaderExpanded=${this._rowHeaderExpanded}
           @panelchange=${this.#handlePanelChange}
           @removerow=${this.#handleRemoveRow}
           @panelremoved=${this.#handleRemove}
@@ -624,6 +633,10 @@ export class MvrApp extends LitElement {
         ...board.items.slice(rowIndex + 1),
       ],
     };
+  }
+
+  #handleToggleRowHeader() {
+    this._rowHeaderExpanded = !this._rowHeaderExpanded;
   }
 }
 
