@@ -15,7 +15,8 @@
     "build": "rimraf dist && vite build",
     "start:build": "web-dev-server --root-dir dist --app-index index.html --open",
     "analyze": "cem analyze --litelement",
-    "start": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"vite\"",
+    "start": "supabase start && tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"vite\"",
+    "stop": "supabase stop --backup",
     "build-storybook": "storybook build"
   },
   "dependencies": {
