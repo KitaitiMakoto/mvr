@@ -16,6 +16,7 @@ import './mvr-board.js';
 import type { Board, MvrBoard } from './mvr-board.js';
 
 import './mv-assets.js';
+import { loadBoard } from './storage/localStorage.js';
 
 @customElement('mvr-app')
 export class MvrApp extends LitElement {
@@ -214,16 +215,7 @@ export class MvrApp extends LitElement {
     }
     try {
       let board: Board | undefined;
-      const cache = await new Promise<string | null>(resolve => {
-        resolve(localStorage.getItem(this.src));
-      });
-      if (cache) {
-        try {
-          board = JSON.parse(cache);
-        } catch (e) {
-          console.error(e);
-        }
-      }
+      board = await loadBoard(this.src);
       if (!board) {
         board = await fetch(this.src).then(res => res.json());
       }
