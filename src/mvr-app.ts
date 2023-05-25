@@ -16,7 +16,7 @@ import './mvr-board.js';
 import type { Board, MvrBoard } from './mvr-board.js';
 
 import './mv-assets.js';
-import { loadBoard, saveBoard } from './storage/localStorage.js';
+import { loadBoard, saveBoard } from './storage/supabase.js';
 
 @customElement('mvr-app')
 export class MvrApp extends LitElement {
