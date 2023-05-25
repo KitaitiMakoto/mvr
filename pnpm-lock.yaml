@@ -28,6 +28,9 @@ dependencies:
   '@supabase/supabase-js':
     specifier: ^2.22.0
     version: 2.22.0
+  '@types/node':
+    specifier: '16'
+    version: 16.18.31
   lit:
     specifier: ^2.0.2
     version: 2.0.2
@@ -3691,7 +3694,6 @@ packages:
 
   /@types/node@16.18.31:
     resolution: {integrity: sha512-KPXltf4z4g517OlVJO9XQ2357CYw7fvuJ3ZuBynjXC5Jos9i+K7LvFb7bUIwtJXSZj0vTp9Q6NJBSQpkwwO8Zw==}
-    dev: true
 
   /@types/node@20.1.4:
     resolution: {integrity: sha512-At4pvmIOki8yuwLtd7BNHl3CiWNbtclUbNtScGx4OHfBd4/oWoJC8KRCIxXwkdndzhxOsPXihrsOoydxBjlE9Q==}
