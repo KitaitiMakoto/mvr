@@ -9,14 +9,17 @@ import '@spectrum-web-components/icons-workflow/icons/sp-icon-home.js';
 
 import './mv-panel.js';
 
+type ID = `${string}-${string}-${string}-${string}-${string}`;
+
 export interface Board {
+  id: ID;
   preferences?: {
     panelWidth: string;
   };
   items: {
     name: string;
     items: {
-      id: `${string}-${string}-${string}-${string}-${string}`;
+      id: ID;
       name?: string;
       src?: string;
       alt?: string;

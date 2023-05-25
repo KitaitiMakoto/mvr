@@ -224,6 +224,7 @@ export class MvrApp extends LitElement {
       }
       this.srcObject = {
         ...board,
+        id: board.id ?? crypto.randomUUID(),
         preferences: board.preferences ?? {
           panelWidth: '10vw',
         },
