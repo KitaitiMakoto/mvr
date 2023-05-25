@@ -163,7 +163,7 @@ export class MvrApp extends LitElement {
               <dialog id="share-dialog">
                 <textarea
                   .value=${JSON.stringify(
-                    this._$board?.srcObject ?? '',
+                    this.srcObject ?? '',
                     undefined,
                     '  '
                   )}
