@@ -29,7 +29,8 @@
     "@spectrum-web-components/theme": "^0.30.0",
     "@supabase/supabase-js": "^2.22.0",
     "@types/node": "16",
-    "lit": "^2.0.2"
+    "lit": "^2.0.2",
+    "vite": "^4.3.8"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.16.4",
