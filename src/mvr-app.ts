@@ -125,6 +125,7 @@ export class MvrApp extends LitElement {
                       )}
                       @input=${this.#handlePanelWidthChange}
                       label-visibility="none"
+                      style="min-inline-size: 12rem;"
                     ></sp-slider>
                   </sp-action-group>
                 </div>
