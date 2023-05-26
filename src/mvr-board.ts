@@ -82,12 +82,15 @@ export class MvrBoard extends LitElement {
       inline-size: 100%;
     }
 
-    .panel-count {
-      inline-size: 100%;
-      text-align: end;
+    .info {
       display: flex;
-      justify-content: flex-end;
-      align-items: flex-end;
+      justify-content: space-between;
+      inline-size: 100%;
+    }
+
+    [aria-expanded='false'] .info {
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
 
     .row .items {
@@ -157,7 +160,7 @@ export class MvrBoard extends LitElement {
 
     return html`
       ${this.srcObject.items.map(
-        (items, i) => html`
+        (items, i, rows) => html`
           <div class="row">
             <div
               class="header"
@@ -187,7 +190,10 @@ export class MvrBoard extends LitElement {
                   ></sp-icon-table-row-remove-center>
                 </sp-action-button>
               </sp-action-group>
-              <div class="panel-count">${items.items.length}枚</div>
+              <div class="info">
+                <div class="panel-count">${items.items.length}枚</div>
+                <div class="row-number">${i + 1}/${rows.length}行目</div>
+              </div>
             </div>
             <div class="items">
               ${repeat(
