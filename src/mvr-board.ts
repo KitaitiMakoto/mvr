@@ -8,6 +8,7 @@ import '@spectrum-web-components/icons-workflow/icons/sp-icon-table-row-remove-c
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-home.js';
 
 import './mv-panel.js';
+import type { MvPanel } from './mv-panel.js';
 
 type ID = `${string}-${string}-${string}-${string}-${string}`;
 
@@ -102,14 +103,12 @@ export class MvrBoard extends LitElement {
       scroll-behavior: smooth;
     }
 
-    .row .item {
-      inline-size: var(--panel-width, 10vw);
+    .row mv-panel {
       flex-shrink: 0;
-      display: flex;
-      justify-content: center;
+      inline-size: var(--panel-width, 10vw);
     }
 
-    .row .item > * {
+    .row mv-panel > * {
       max-inline-size: 100%;
       max-block-size: 100%;
     }
@@ -200,30 +199,29 @@ export class MvrBoard extends LitElement {
                 items.items,
                 ({ id }) => id,
                 ({ name, src, alt, content }, j) => html`
-                  <div class="item" ${animate()}>
-                    <mv-panel
-                      heading=${name}
-                      folio=${j}
-                      .selected=${i === this.selectedPanelIndex?.[0] &&
-                      j === this.selectedPanelIndex?.[1]}
-                      @focusin="${this.#handleFocusIn}"
-                      @headingchange=${(e: CustomEvent) =>
-                        this.#handleHeadingChange(i, j, e)}
-                      data-src=${(src ?? '').split('/').at(-1)}
-                    >
-                      ${src
-                        ? html`<img src=${src} alt=${alt} loading="lazy" />`
-                        : html`<textarea
-                            .value=${content ?? ''}
-                            @change=${(e: Event) =>
-                              this.#handleContentChange(
-                                i,
-                                j,
-                                (e.currentTarget as HTMLTextAreaElement)?.value
-                              )}
-                          ></textarea>`}
-                    </mv-panel>
-                  </div>
+                  <mv-panel
+                    heading=${name}
+                    folio=${j}
+                    .selected=${i === this.selectedPanelIndex?.[0] &&
+                    j === this.selectedPanelIndex?.[1]}
+                    @focusin="${this.#handleFocusIn}"
+                    @headingchange=${(e: CustomEvent) =>
+                      this.#handleHeadingChange(i, j, e)}
+                    ${animate()}
+                    data-src=${(src ?? '').split('/').at(-1)}
+                  >
+                    ${src
+                      ? html`<img src=${src} alt=${alt} loading="lazy" />`
+                      : html`<textarea
+                          .value=${content ?? ''}
+                          @change=${(e: Event) =>
+                            this.#handleContentChange(
+                              i,
+                              j,
+                              (e.currentTarget as HTMLTextAreaElement)?.value
+                            )}
+                        ></textarea>`}
+                  </mv-panel>
                   ${j % 2 === 1 && j !== items.items.length - 1
                     ? html`<hr class="divider" />`
                     : undefined}
@@ -249,7 +247,7 @@ export class MvrBoard extends LitElement {
 
   goHome(i: number) {
     this.renderRoot
-      .querySelector(`.row:nth-child(${i + 1}) .item:first-child`)
+      .querySelector(`.row:nth-child(${i + 1}) mv-panel:first-child`)
       ?.scrollIntoView({ block: 'center', inline: 'start' });
   }
 
@@ -274,10 +272,9 @@ export class MvrBoard extends LitElement {
     if (!panel) {
       return;
     }
-    const item = (panel as HTMLElement).closest('.item')!;
-    const items = item.parentNode as HTMLElement;
-    const column = Array.from(items.querySelectorAll('.item')).findIndex(
-      elem => elem === item
+    const items = (panel as MvPanel).parentNode as HTMLElement;
+    const column = Array.from(items.querySelectorAll('mv-panel')).findIndex(
+      elem => elem === panel
     );
     const rowElem = items.parentNode!;
     const row = Array.from(
