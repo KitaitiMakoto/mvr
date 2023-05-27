@@ -9,6 +9,7 @@ import '@spectrum-web-components/icons-workflow/icons/sp-icon-home.js';
 
 import './mv-panel.js';
 import type { MvPanel } from './mv-panel.js';
+import './mvr-panel-border.js';
 
 type ID = `${string}-${string}-${string}-${string}-${string}`;
 
@@ -99,7 +100,6 @@ export class MvrBoard extends LitElement {
       display: flex;
       flex-direction: var(--row-direction);
       align-items: center;
-      gap: 1rem;
       overflow-x: scroll;
       scroll-behavior: smooth;
     }
@@ -112,14 +112,6 @@ export class MvrBoard extends LitElement {
     .row mv-panel > * {
       max-inline-size: 100%;
       max-block-size: 100%;
-    }
-
-    .divider {
-      align-self: stretch;
-      margin-inline: 0.5rem;
-      margin-block: 1rem;
-      border: none;
-      border-inline-end: solid 1px gray;
     }
 
     mv-panel {
@@ -141,6 +133,17 @@ export class MvrBoard extends LitElement {
 
     mv-panel[data-src='']:hover::after {
       display: none;
+    }
+
+    mvr-panel-border {
+      flex-shrink: 0;
+      inline-size: var(--spectrum-spacing-200);
+      block-size: 100%;
+      color: var(--spectrum-global-color-gray-500);
+    }
+
+    mvr-panel-border[divider] {
+      inline-size: var(--spectrum-spacing-500);
     }
   `;
 
@@ -210,6 +213,9 @@ export class MvrBoard extends LitElement {
                 items.items,
                 ({ id }) => id,
                 ({ name, src, alt, content }, j) => html`
+                  <mvr-panel-border
+                    .divider=${j % 2 === 1 && j !== items.items.length - 1}
+                  ></mvr-panel-border>
                   <mv-panel
                     heading=${name}
                     folio=${j}
@@ -233,11 +239,9 @@ export class MvrBoard extends LitElement {
                             )}
                         ></textarea>`}
                   </mv-panel>
-                  ${j % 2 === 1 && j !== items.items.length - 1
-                    ? html`<hr class="divider" />`
-                    : undefined}
                 `
               )}
+              <mvr-panel-border></mvr-panel-border>
             </div>
           </div>
         `
