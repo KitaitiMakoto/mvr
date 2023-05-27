@@ -156,6 +156,9 @@ export class MvrApp extends LitElement {
                       label-visibility="none"
                       style="min-inline-size: 12rem;"
                     ></sp-slider>
+                    <sp-action-button @click=${this.#handleToggleRowHeader}>
+                      ${this._rowHeaderExpanded ? '縮小' : '拡大'}
+                    </sp-action-button>
                   </sp-action-group>
                 </div>
                 <div class="controls">
@@ -181,11 +184,6 @@ export class MvrApp extends LitElement {
                     </sp-action-button>
                     <sp-action-button @click=${this.#handleUnbreak}>
                       ここまで前の行へ
-                    </sp-action-button>
-                  </sp-action-group>
-                  <sp-action-group>
-                    <sp-action-button @click=${this.#handleToggleRowHeader}>
-                      ${this._rowHeaderExpanded ? '縮小' : '拡大'}
                     </sp-action-button>
                   </sp-action-group>
                 </div>
