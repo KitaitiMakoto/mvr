@@ -6,6 +6,7 @@ import '@spectrum-web-components/action-group/sp-action-group.js';
 import '@spectrum-web-components/action-button/sp-action-button.js';
 import '@spectrum-web-components/field-label/sp-field-label.js';
 import '@spectrum-web-components/slider/sp-slider.js';
+import '@spectrum-web-components/popover/sp-popover.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-text-add.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-settings.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-feed-add.js';
@@ -14,8 +15,7 @@ import '@spectrum-web-components/icons-workflow/icons/sp-icon-share.js';
 
 import './mvr-board.js';
 import type { Board, MvrBoard } from './mvr-board.js';
-
-import './mv-assets.js';
+import './mv-panel.js';
 import { loadBoard, saveBoard } from './storage/supabase.js';
 
 @customElement('mvr-app')
@@ -54,6 +54,14 @@ export class MvrApp extends LitElement {
 
     mvr-board {
       background-color: var(--spectrum-global-color-gray-200);
+    }
+
+    .selected-panel {
+      position: fixed;
+      inline-size: 5rem;
+      z-index: 12;
+      inset-inline-end: 1rem;
+      inset-block-end: 1rem;
     }
 
     /* FIXME */
@@ -104,6 +112,12 @@ export class MvrApp extends LitElement {
     if (!this.srcObject) {
       return html`<p>Loading...</p>`;
     }
+
+    const panel = this._selectedPanelIndex
+      ? this.srcObject?.items[this._selectedPanelIndex[0]].items[
+          this._selectedPanelIndex[1]
+        ]
+      : undefined;
 
     return html`
       <sp-theme scale="medium" color="light">
@@ -173,6 +187,26 @@ export class MvrApp extends LitElement {
                   </sp-action-group>
                 </div>
               </div>
+              <sp-popover .open=${panel} class="selected-panel">
+                <mv-panel
+                  heading=${panel?.name}
+                  folio=${this._selectedPanelIndex?.[1]}
+                  selected
+                  @headingchange=${() => console.debug('Implement me')}
+                  data-src=${(panel?.src ?? '').split('/').at(-1)}
+                >
+                  ${panel?.src
+                    ? html`<img
+                        src=${panel.src}
+                        alt=${panel.alt}
+                        loading="lazy"
+                      />`
+                    : html`<textarea
+                        .value=${panel?.content ?? ''}
+                        @change=${() => console.debug('Implement me')}
+                      ></textarea>`}
+                </mv-panel>
+              </sp-popover>
               <dialog id="share-dialog">
                 <textarea
                   .value=${JSON.stringify(
