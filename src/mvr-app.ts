@@ -116,12 +116,6 @@ export class MvrApp extends LitElement {
       return html`<p>Loading...</p>`;
     }
 
-    const panel = this._selectedPanelIndex
-      ? this.srcObject?.items[this._selectedPanelIndex[0]].items[
-          this._selectedPanelIndex[1]
-        ]
-      : undefined;
-
     return html`
       <sp-theme scale="medium" color="light">
         ${this.controls
@@ -188,36 +182,7 @@ export class MvrApp extends LitElement {
                   </sp-action-group>
                 </div>
               </div>
-              <sp-popover .open=${panel} class="selected-panel">
-                <sp-quick-actions opened>
-                  <sp-action-button
-                    label="パネルの場所に移動"
-                    size="xs"
-                    quiet
-                    @click=${this.#handleScrollIntoSelectedPanel}
-                  >
-                    <sp-icon-compass slot="icon"></sp-icon-compass>
-                  </sp-action-button>
-                </sp-quick-actions>
-                <mv-panel
-                  heading=${panel?.name}
-                  folio=${this._selectedPanelIndex?.[1]}
-                  selected
-                  @headingchange=${() => console.debug('Implement me')}
-                  data-src=${(panel?.src ?? '').split('/').at(-1)}
-                >
-                  ${panel?.src
-                    ? html`<img
-                        src=${panel.src}
-                        alt=${panel.alt}
-                        loading="lazy"
-                      />`
-                    : html`<textarea
-                        .value=${panel?.content ?? ''}
-                        @change=${() => console.debug('Implement me')}
-                      ></textarea>`}
-                </mv-panel>
-              </sp-popover>
+              ${this.#renderSelectedPanel()}
               <dialog id="share-dialog">
                 <textarea
                   .value=${JSON.stringify(
@@ -241,6 +206,43 @@ export class MvrApp extends LitElement {
           @contentchange=${this.#handleContentChange}
         ></mvr-board>
       </sp-theme>
+    `;
+  }
+
+  #renderSelectedPanel() {
+    const panel = this._selectedPanelIndex
+      ? this.srcObject?.items[this._selectedPanelIndex[0]].items[
+          this._selectedPanelIndex[1]
+        ]
+      : undefined;
+
+    return html`
+      <sp-popover .open=${panel} class="selected-panel">
+        <sp-quick-actions opened>
+          <sp-action-button
+            label="パネルの場所に移動"
+            size="xs"
+            quiet
+            @click=${this.#handleScrollIntoSelectedPanel}
+          >
+            <sp-icon-compass slot="icon"></sp-icon-compass>
+          </sp-action-button>
+        </sp-quick-actions>
+        <mv-panel
+          heading=${panel?.name}
+          folio=${this._selectedPanelIndex?.[1]}
+          selected
+          @headingchange=${() => console.debug('Implement me')}
+          data-src=${(panel?.src ?? '').split('/').at(-1)}
+        >
+          ${panel?.src
+            ? html`<img src=${panel.src} alt=${panel.alt} loading="lazy" />`
+            : html`<textarea
+                .value=${panel?.content ?? ''}
+                @change=${() => console.debug('Implement me')}
+              ></textarea>`}
+        </mv-panel>
+      </sp-popover>
     `;
   }
 
