@@ -29,7 +29,7 @@ export class MvrApp extends LitElement {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
-      background-color: #ededed;
+      background-color: var(--spectrum-global-color-gray-100);
     }
 
     .controls {
@@ -50,6 +50,10 @@ export class MvrApp extends LitElement {
 
     sp-action-group {
       align-items: center;
+    }
+
+    mvr-board {
+      background-color: var(--spectrum-global-color-gray-200);
     }
   `;
 

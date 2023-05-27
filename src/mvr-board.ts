@@ -59,6 +59,7 @@ export class MvrBoard extends LitElement {
       gap: 0.5rem;
       block-size: calc(var(--panel-width, 10vw) * 4 / 3);
       transition: width 200ms;
+      background-color: var(--spectrum-global-color-gray-100);
     }
 
     .header[aria-expanded='false'] {
@@ -122,7 +123,7 @@ export class MvrBoard extends LitElement {
     }
 
     mv-panel {
-      background-color: #fafafa;
+      background-color: var(--spectrum-global-color-gray-50);
     }
 
     mv-panel:hover::after {
