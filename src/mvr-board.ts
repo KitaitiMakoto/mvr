@@ -58,7 +58,7 @@ export class MvrBoard extends LitElement {
       align-content: flex-start;
       gap: 0.5rem;
       block-size: calc(var(--panel-width, 10vw) * 4 / 3);
-      transition: width 200ms;
+      transition: inline-size var(--spectrum-global-animation-duration-100);
       background-color: var(--spectrum-global-color-gray-100);
     }
 
