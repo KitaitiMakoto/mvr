@@ -26,6 +26,7 @@
     "@spectrum-web-components/action-group": "^0.30.0",
     "@spectrum-web-components/field-label": "^0.30.0",
     "@spectrum-web-components/icons-workflow": "^0.30.0",
+    "@spectrum-web-components/popover": "^0.31.0",
     "@spectrum-web-components/slider": "^0.30.0",
     "@spectrum-web-components/theme": "^0.30.0",
     "@supabase/supabase-js": "^2.22.0",
