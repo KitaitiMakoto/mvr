@@ -55,6 +55,14 @@ export class MvrApp extends LitElement {
     mvr-board {
       background-color: var(--spectrum-global-color-gray-200);
     }
+
+    /* FIXME */
+    dialog {
+      position: fixed;
+      inset-block-start: 50%;
+      transform: translateY(-50%);
+      height: 80vh;
+    }
   `;
 
   @property({ type: Boolean, reflect: true })
