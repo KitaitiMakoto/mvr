@@ -64,6 +64,7 @@ export class MvrApp extends LitElement {
       z-index: 12;
       inset-inline-end: 1rem;
       inset-block-end: 1rem;
+      padding: 0.5rem;
     }
 
     /* FIXME */
