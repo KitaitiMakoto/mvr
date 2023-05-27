@@ -262,7 +262,7 @@ export class MvrBoard extends LitElement {
 
   goHome(i: number) {
     this.renderRoot
-      .querySelector(`.row:nth-child(${i + 1}) mv-panel:first-child`)
+      .querySelector(`.row:nth-child(${i + 1}) mv-panel:first-of-type`)
       ?.scrollIntoView({ block: 'center', inline: 'start' });
   }
 
