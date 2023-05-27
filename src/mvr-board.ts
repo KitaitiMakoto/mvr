@@ -153,6 +153,16 @@ export class MvrBoard extends LitElement {
   @state()
   rowHeaderExpanded: Boolean = true;
 
+  get selectedPanel() {
+    if (!this.selectedPanelIndex) {
+      return null;
+    }
+    const [row, col] = this.selectedPanelIndex;
+    return this.renderRoot.querySelector<MvPanel>(
+      `.row:nth-child(${row + 1}) mv-panel:nth-of-type(${col + 1})`
+    );
+  }
+
   render() {
     if (!this.srcObject) {
       return html`<p>Loading...</p>`;
@@ -266,6 +276,10 @@ export class MvrBoard extends LitElement {
     } else {
       this.rowHeaderExpanded = value;
     }
+  }
+
+  scrollIntoSelectedPanel() {
+    this.selectedPanel?.scrollIntoView({ block: 'center', inline: 'center' });
   }
 
   #handleFocusIn(event: FocusEvent) {

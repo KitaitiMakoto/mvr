@@ -7,11 +7,13 @@ import '@spectrum-web-components/action-button/sp-action-button.js';
 import '@spectrum-web-components/field-label/sp-field-label.js';
 import '@spectrum-web-components/slider/sp-slider.js';
 import '@spectrum-web-components/popover/sp-popover.js';
+import '@spectrum-web-components/quick-actions/sp-quick-actions.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-text-add.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-settings.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-feed-add.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-folder.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-share.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-compass.js';
 
 import './mvr-board.js';
 import type { Board, MvrBoard } from './mvr-board.js';
@@ -188,6 +190,16 @@ export class MvrApp extends LitElement {
                 </div>
               </div>
               <sp-popover .open=${panel} class="selected-panel">
+                <sp-quick-actions opened>
+                  <sp-action-button
+                    label="パネルの場所に移動"
+                    size="xs"
+                    quiet
+                    @click=${this.#handleScrollIntoSelectedPanel}
+                  >
+                    <sp-icon-compass slot="icon"></sp-icon-compass>
+                  </sp-action-button>
+                </sp-quick-actions>
                 <mv-panel
                   heading=${panel?.name}
                   folio=${this._selectedPanelIndex?.[1]}
@@ -679,6 +691,10 @@ export class MvrApp extends LitElement {
 
   #handleToggleRowHeader() {
     this._rowHeaderExpanded = !this._rowHeaderExpanded;
+  }
+
+  #handleScrollIntoSelectedPanel() {
+    this._$board?.scrollIntoSelectedPanel();
   }
 }
 
