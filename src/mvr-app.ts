@@ -375,7 +375,6 @@ export class MvrApp extends LitElement {
       ],
     };
     this._selectedPanelIndex = [rowIndex, colIndex + 1];
-    // this._$board?.duplicatePanel();
   }
 
   #handleRemove() {
