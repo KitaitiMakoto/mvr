@@ -23,20 +23,15 @@ import { loadBoard, saveBoard } from './storage/supabase.js';
 @customElement('mvr-app')
 export class MvrApp extends LitElement {
   static styles = css`
-    .controls-wrapper {
+    .controls {
       position: sticky;
       inset-block-start: 0;
       z-index: 12;
       padding: 0.5rem 1rem;
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       gap: 0.5rem;
       background-color: var(--spectrum-global-color-gray-100);
-    }
-
-    .controls {
-      display: flex;
-      justify-content: space-between;
     }
 
     #share-dialog {
@@ -120,51 +115,39 @@ export class MvrApp extends LitElement {
       <sp-theme scale="medium" color="light">
         ${this.controls
           ? html`
-              <div class="controls-wrapper">
-                <div class="controls">
-                  <sp-action-group>
-                    <sp-action-button @click=${this.#handleAddText}>
-                      <sp-icon-text-add slot="icon"></sp-icon-text-add>
-                      テキスト
-                    </sp-action-button>
-                    <sp-action-button @click=${this.#handleAddRow}>
-                      <sp-icon-feed-add slot="icon"></sp-icon-feed-add>
-                      行
-                    </sp-action-button>
-                  </sp-action-group>
-                  <sp-action-group>
-                    <sp-action-button @click=${this.#handleShare}>
-                      <sp-icon-share slot="icon"></sp-icon-share>共有
-                    </sp-action-button>
-                  </sp-action-group>
-                  <sp-action-group>
-                    <sp-field-label>パネル幅</sp-field-label>
-                    <sp-slider
-                      id="panel-width"
-                      min="5"
-                      .value=${Number.parseInt(
-                        this.srcObject.preferences?.panelWidth ?? '10',
-                        10
-                      )}
-                      @input=${this.#handlePanelWidthChange}
-                      label-visibility="none"
-                      style="min-inline-size: 12rem;"
-                    ></sp-slider>
-                    <sp-action-button @click=${this.#handleToggleRowHeader}>
-                      ${this._rowHeaderExpanded ? '縮小' : '拡大'}
-                    </sp-action-button>
-                  </sp-action-group>
-                </div>
-                <div class="controls">
-                  <sp-action-group>
-                    <sp-action-button @click=${this.#handleForward}>
-                      先へ
-                    </sp-action-button>
-                    <sp-action-button @click=${this.#handleBack}>
-                      後ろへ
-                    </sp-action-button>
-                  </sp-action-group>
-                </div>
+              <div class="controls">
+                <sp-action-group>
+                  <sp-action-button @click=${this.#handleAddText}>
+                    <sp-icon-text-add slot="icon"></sp-icon-text-add>
+                    テキスト
+                  </sp-action-button>
+                  <sp-action-button @click=${this.#handleAddRow}>
+                    <sp-icon-feed-add slot="icon"></sp-icon-feed-add>
+                    行
+                  </sp-action-button>
+                </sp-action-group>
+                <sp-action-group>
+                  <sp-action-button @click=${this.#handleShare}>
+                    <sp-icon-share slot="icon"></sp-icon-share>共有
+                  </sp-action-button>
+                </sp-action-group>
+                <sp-action-group>
+                  <sp-field-label>パネル幅</sp-field-label>
+                  <sp-slider
+                    id="panel-width"
+                    min="5"
+                    .value=${Number.parseInt(
+                      this.srcObject.preferences?.panelWidth ?? '10',
+                      10
+                    )}
+                    @input=${this.#handlePanelWidthChange}
+                    label-visibility="none"
+                    style="min-inline-size: 12rem;"
+                  ></sp-slider>
+                  <sp-action-button @click=${this.#handleToggleRowHeader}>
+                    ${this._rowHeaderExpanded ? '縮小' : '拡大'}
+                  </sp-action-button>
+                </sp-action-group>
               </div>
               ${this.#renderSelectedPanel()}
               <dialog id="share-dialog">
@@ -189,6 +172,8 @@ export class MvrApp extends LitElement {
           @contentchange=${this.#handleContentChange}
           @duplicate=${this.#handleDuplicate}
           @remove=${this.#handleRemove}
+          @forward=${this.#handleForward2}
+          @back=${this.#handleBack2}
           @break=${this.#handleBreak}
           @unbreak=${this.#handleUnbreak}
         ></mvr-board>
@@ -443,16 +428,12 @@ export class MvrApp extends LitElement {
     };
   }
 
-  #handleForward() {
+  #handleForward2(event: CustomEvent) {
     const { srcObject: board } = this;
     if (!board) {
       return;
     }
-    if (!this._selectedPanelIndex) {
-      return;
-    }
-    const rowIndex = this._selectedPanelIndex[0];
-    const colIndex = this._selectedPanelIndex[1];
+    const [rowIndex, colIndex] = event.detail.index as [number, number];
     const row = board.items[rowIndex];
     if (colIndex >= row.items.length - 1) {
       return;
@@ -473,19 +454,15 @@ export class MvrApp extends LitElement {
         ...board.items.slice(rowIndex + 1),
       ],
     };
-    this._selectedPanelIndex = [rowIndex, colIndex + 1];
   }
 
-  #handleBack() {
+  #handleBack2(event: CustomEvent) {
     const { srcObject: board } = this;
     if (!board) {
       return;
     }
-    if (!this._selectedPanelIndex) {
-      return;
-    }
-    const rowIndex = this._selectedPanelIndex[0];
-    const colIndex = this._selectedPanelIndex[1];
+    const [rowIndex, colIndex] = event.detail.index as [number, number];
+
     if (colIndex === 0) {
       return;
     }
@@ -506,7 +483,6 @@ export class MvrApp extends LitElement {
         ...board.items.slice(rowIndex + 1),
       ],
     };
-    this._selectedPanelIndex = [rowIndex, colIndex - 1];
   }
 
   #handleBreak(event: CustomEvent) {

@@ -1,9 +1,12 @@
 import { LitElement, css, html } from 'lit';
+import { styleMap } from 'lit/directives/style-map.js';
 import { customElement, property, query } from 'lit/decorators.js';
 
 import '@spectrum-web-components/action-button/sp-action-button.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-copy.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-delete.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-chevron-left.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-chevron-right.js';
 
 @customElement('mv-panel')
 export class MvPanel extends LitElement {
@@ -33,18 +36,19 @@ export class MvPanel extends LitElement {
       box-sizing: border-box;
     }
 
-    sp-action-button {
+    sp-action-button.duplicate,
+    sp-action-button.remove {
       display: none;
 
       position: absolute;
       inset-block-start: 0;
     }
 
-    sp-action-button:first-of-type {
+    sp-action-button.duplicate {
       inset-inline-start: 0;
     }
 
-    sp-action-button:last-of-type {
+    sp-action-button.remove {
       inset-inline-end: 0;
     }
 
@@ -53,8 +57,7 @@ export class MvPanel extends LitElement {
     }
 
     .heading,
-    .content,
-    .folio {
+    .content {
       inline-size: 100%;
     }
 
@@ -81,12 +84,22 @@ export class MvPanel extends LitElement {
       text-align: start;
     }
 
-    .folio {
+    footer {
+      --spectrum-actionbutton-content-color-default: var(--spectrum-gray-500);
+
       align-self: flex-end;
+      inline-size: 100%;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
       font-size: small;
       line-height: 1;
       text-align: center;
-      color: gray;
+      color: var(--spectrum-actionbutton-content-color-default);
+    }
+
+    footer sp-action-button {
+      color: inherit;
     }
 
     ::slotted(*) {
@@ -110,6 +123,12 @@ export class MvPanel extends LitElement {
   tabIndex = -1;
 
   render() {
+    const direction =
+      getComputedStyle(this).getPropertyValue('--row-direction');
+    const footerStyles = {
+      flexDirection: direction === 'row-reverse' ? 'row' : 'row-reverse',
+    };
+
     return html`
       <sp-action-button
         class="duplicate"
@@ -138,7 +157,29 @@ export class MvPanel extends LitElement {
       <div class="content">
         <slot></slot>
       </div>
-      <div class="folio">${this.folio}</div>
+      <footer style=${styleMap(footerStyles)}>
+        <sp-action-button
+          label="先へ"
+          size="s"
+          quiet
+          @click=${this.#handleClickForward}
+        >
+          ${direction === 'row-reverse'
+            ? html`<sp-icon-chevron-left slot="icon"></sp-icon-chevron-left>`
+            : html`<sp-icon-chevron-right slot="icon"></sp-icon-chevron-right>`}
+        </sp-action-button>
+        <div class="folio">${this.folio}</div>
+        <sp-action-button
+          label="後ろへ"
+          size="s"
+          quiet
+          @click=${this.#handleClickBack}
+        >
+          ${direction === 'row-reverse'
+            ? html`<sp-icon-chevron-right slot="icon"></sp-icon-chevron-right>`
+            : html`<sp-icon-chevron-left slot="icon"></sp-icon-chevron-left>`}
+        </sp-action-button>
+      </footer>
     `;
   }
 
@@ -156,6 +197,14 @@ export class MvPanel extends LitElement {
 
   #handleClickRemove() {
     this.dispatchEvent(new MouseEvent('clickremove'));
+  }
+
+  #handleClickForward() {
+    this.dispatchEvent(new MouseEvent('clickforward'));
+  }
+
+  #handleClickBack() {
+    this.dispatchEvent(new MouseEvent('clickback'));
   }
 }
 

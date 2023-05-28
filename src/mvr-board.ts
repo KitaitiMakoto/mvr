@@ -244,6 +244,8 @@ export class MvrBoard extends LitElement {
                     ${animate()}
                     @clickduplicate=${() => this.#handleDuplicate(i, j)}
                     @clickremove=${() => this.#handleRemove(i, j)}
+                    @clickforward=${() => this.#handleForward(i, j)}
+                    @clickback=${() => this.#handleBack(i, j)}
                   >
                     <div class="panel-content">
                       ${src
@@ -375,6 +377,18 @@ export class MvrBoard extends LitElement {
   #handleRemove(rowIndex: number, colIndex: number) {
     this.dispatchEvent(
       new CustomEvent('remove', { detail: { index: [rowIndex, colIndex] } })
+    );
+  }
+
+  #handleForward(rowIndex: number, colIndex: number) {
+    this.dispatchEvent(
+      new CustomEvent('forward', { detail: { index: [rowIndex, colIndex] } })
+    );
+  }
+
+  #handleBack(rowIndex: number, colIndex: number) {
+    this.dispatchEvent(
+      new CustomEvent('back', { detail: { index: [rowIndex, colIndex] } })
     );
   }
 
