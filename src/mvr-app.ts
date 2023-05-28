@@ -172,14 +172,6 @@ export class MvrApp extends LitElement {
                       後ろへ
                     </sp-action-button>
                   </sp-action-group>
-                  <sp-action-group>
-                    <sp-action-button @click=${this.#handleBreak}>
-                      折り返す
-                    </sp-action-button>
-                    <sp-action-button @click=${this.#handleUnbreak}>
-                      ここまで前の行へ
-                    </sp-action-button>
-                  </sp-action-group>
                 </div>
               </div>
               ${this.#renderSelectedPanel()}
@@ -204,6 +196,8 @@ export class MvrApp extends LitElement {
           @headingchange=${this.#handleHeadingChange}
           @rowheadingchange=${this.#handleRowHeadingChange}
           @contentchange=${this.#handleContentChange}
+          @break=${this.#handleBreak}
+          @unbreak=${this.#handleUnbreak}
         ></mvr-board>
       </sp-theme>
     `;
@@ -534,22 +528,18 @@ export class MvrApp extends LitElement {
     this._selectedPanelIndex = [rowIndex, colIndex - 1];
   }
 
-  #handleBreak() {
-    const index = this._selectedPanelIndex;
-    if (!index) {
-      return;
-    }
-    const rowIndex = index[0];
-    const colIndex = index[1];
+  #handleBreak(event: CustomEvent) {
     const { srcObject: board } = this;
     if (!board) {
       return;
     }
-    if (rowIndex === board.items.length - 1) {
-      this.#handleAddRow();
-    }
+    const [rowIndex, colIndex] = event.detail.index as [number, number];
     const row = board.items[rowIndex];
-    if (colIndex >= row.items.length - 1) {
+    const nextRow =
+      rowIndex === board.items.length - 1
+        ? { name: '', items: [] }
+        : board.items[rowIndex + 1];
+    if (colIndex >= row.items.length) {
       return;
     }
     this.srcObject = {
@@ -558,30 +548,23 @@ export class MvrApp extends LitElement {
         ...board.items.slice(0, rowIndex),
         {
           ...row,
-          items: [...row.items.slice(0, colIndex + 1)],
+          items: [...row.items.slice(0, colIndex)],
         },
         {
-          ...board.items[rowIndex + 1],
-          items: [
-            ...row.items.slice(colIndex + 1),
-            ...board.items[rowIndex + 1].items,
-          ],
+          ...nextRow,
+          items: [...row.items.slice(colIndex), ...nextRow.items],
         },
         ...board.items.slice(rowIndex + 2),
       ],
     };
   }
 
-  #handleUnbreak() {
+  #handleUnbreak(event: CustomEvent) {
     const { srcObject: board } = this;
     if (!board) {
       return;
     }
-    if (!this._selectedPanelIndex) {
-      return;
-    }
-    const rowIndex = this._selectedPanelIndex[0];
-    const colIndex = this._selectedPanelIndex[1];
+    const [rowIndex, colIndex] = event.detail.index as [number, number];
     const row = board.items[rowIndex];
     this.srcObject = {
       ...board,
@@ -591,23 +574,16 @@ export class MvrApp extends LitElement {
           ...board.items[rowIndex - 1],
           items: [
             ...(board.items[rowIndex - 1]?.items ?? []),
-            ...row.items.slice(0, colIndex + 1),
+            ...row.items.slice(0, colIndex),
           ],
         },
         {
           ...row,
-          items: row.items.slice(colIndex + 1),
+          items: row.items.slice(colIndex),
         },
         ...board.items.slice(rowIndex + 1),
       ],
     };
-    this._selectedPanelIndex =
-      rowIndex === 0
-        ? [rowIndex + 1, colIndex + 1]
-        : [
-            rowIndex,
-            this.srcObject.items[rowIndex - 1].items.length - 1 + colIndex,
-          ];
   }
 
   #handlePanelChange(event: CustomEvent) {

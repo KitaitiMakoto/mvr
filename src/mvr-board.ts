@@ -4,12 +4,16 @@ import { repeat } from 'lit/directives/repeat.js';
 import { animate } from '@lit-labs/motion';
 
 import '@spectrum-web-components/action-group/sp-action-group.js';
+import '@spectrum-web-components/action-button/sp-action-button.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-table-row-remove-center.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-home.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-layers-backward.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-layers-forward.js';
 
 import './mv-panel.js';
 import type { MvPanel } from './mv-panel.js';
 import './mvr-panel-border.js';
+import type { MvrPanelBorder } from './mvr-panel-border.js';
 
 type ID = `${string}-${string}-${string}-${string}-${string}`;
 
@@ -145,6 +149,13 @@ export class MvrBoard extends LitElement {
     mvr-panel-border[divider] {
       inline-size: var(--spectrum-spacing-500);
     }
+
+    [slot='popover'] {
+      display: flex;
+      flex-direction: var(--row-direction);
+      gap: var(--spectrum-spacing-200);
+      inline-size: max-content;
+    }
   `;
 
   @state()
@@ -213,7 +224,9 @@ export class MvrBoard extends LitElement {
                 items.items,
                 ({ id }) => id,
                 ({ name, src, alt, content }, j) => html`
-                  <mvr-panel-border .divider=${j % 2 === 1}></mvr-panel-border>
+                  <mvr-panel-border .divider=${j % 2 === 1}>
+                    ${this.#renderBorderPopover(i, j)}
+                  </mvr-panel-border>
                   <mv-panel
                     heading=${name}
                     folio=${j}
@@ -239,11 +252,32 @@ export class MvrBoard extends LitElement {
                   </mv-panel>
                 `
               )}
-              <mvr-panel-border></mvr-panel-border>
+              <mvr-panel-border>
+                ${this.#renderBorderPopover(i, items.items.length)}
+              </mvr-panel-border>
             </div>
           </div>
         `
       )}
+    `;
+  }
+
+  #renderBorderPopover(rowIndex: number, colIndex: number) {
+    return html`
+      <div slot="popover">
+        <sp-action-button
+          @click=${() => this.#handleClickUnbreak(rowIndex, colIndex)}
+        >
+          <sp-icon-layers-forward slot="icon"></sp-icon-layers-forward
+          >ここまで前の行へ
+        </sp-action-button>
+        <sp-action-button
+          @click=${() => this.#handleClickBreak(rowIndex, colIndex)}
+        >
+          <sp-icon-layers-backward slot="icon"></sp-icon-layers-backward
+          >折り返す
+        </sp-action-button>
+      </div>
     `;
   }
 
@@ -324,6 +358,34 @@ export class MvrBoard extends LitElement {
         detail: { content, index: [rowIndex, colIndex] },
       })
     );
+  }
+
+  #handleClickBreak(rowIndex: number, colIndex: number) {
+    this.dispatchEvent(
+      new CustomEvent('break', { detail: { index: [rowIndex, colIndex] } })
+    );
+    const border = this.renderRoot.querySelector<MvrPanelBorder>(
+      `.row:nth-child(${rowIndex + 1}) mvr-panel-border:nth-of-type(${
+        colIndex + 1
+      })`
+    );
+    if (border) {
+      border.popoverOpen = false;
+    }
+  }
+
+  #handleClickUnbreak(rowIndex: number, colIndex: number) {
+    this.dispatchEvent(
+      new CustomEvent('unbreak', { detail: { index: [rowIndex, colIndex] } })
+    );
+    const border = this.renderRoot.querySelector<MvrPanelBorder>(
+      `.row:nth-child(${rowIndex + 1}) mvr-panel-border:nth-of-type(${
+        colIndex + 1
+      })`
+    );
+    if (border) {
+      border.popoverOpen = false;
+    }
   }
 }
 
