@@ -117,12 +117,6 @@ export class MvrApp extends LitElement {
           ? html`
               <div class="controls">
                 <sp-action-group>
-                  <sp-action-button @click=${this.#handleAddRow}>
-                    <sp-icon-feed-add slot="icon"></sp-icon-feed-add>
-                    行
-                  </sp-action-button>
-                </sp-action-group>
-                <sp-action-group>
                   <sp-action-button @click=${this.#handleShare}>
                     <sp-icon-share slot="icon"></sp-icon-share>共有
                   </sp-action-button>
@@ -171,6 +165,7 @@ export class MvrApp extends LitElement {
           @forward=${this.#handleForward2}
           @back=${this.#handleBack2}
           @addtext=${this.#handleAddText}
+          @addrow=${this.#handleAddRow}
           @break=${this.#handleBreak}
           @unbreak=${this.#handleUnbreak}
         ></mvr-board>
@@ -315,28 +310,20 @@ export class MvrApp extends LitElement {
     };
   }
 
-  #handleAddRow() {
-    if (!this.srcObject) {
+  #handleAddRow(event: CustomEvent) {
+    const { srcObject: board } = this;
+    if (!board) {
       return;
     }
-    const index = this._selectedPanelIndex;
-    const { srcObject: board } = this;
-    if (index) {
-      const rowIndex = index[0];
-      this.srcObject = {
-        ...board,
-        items: [
-          ...board.items.slice(0, rowIndex + 1),
-          { name: '', items: [] },
-          ...board.items.slice(rowIndex + 1),
-        ],
-      };
-    } else {
-      this.srcObject = {
-        ...board,
-        items: [...board.items, { name: '', items: [] }],
-      };
-    }
+    const rowIndex = event.detail.index as number;
+    this.srcObject = {
+      ...board,
+      items: [
+        ...board.items.slice(0, rowIndex),
+        { name: '', items: [] },
+        ...board.items.slice(rowIndex),
+      ],
+    };
   }
 
   #handleRemoveRow(event: CustomEvent) {

@@ -10,6 +10,7 @@ import '@spectrum-web-components/icons-workflow/icons/sp-icon-home.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-layers-backward.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-layers-forward.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-text-add.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-table-row-add-bottom.js';
 
 import './mv-panel.js';
 import type { MvPanel } from './mv-panel.js';
@@ -218,6 +219,14 @@ export class MvrBoard extends LitElement {
                   <sp-icon-home slot="icon"></sp-icon-home>
                 </sp-action-button>
                 <sp-action-button
+                  label="行を下に追加"
+                  @click=${() => this.addRow(i + 1)}
+                >
+                  <sp-icon-table-row-add-bottom
+                    slot="icon"
+                  ></sp-icon-table-row-add-bottom>
+                </sp-action-button>
+                <sp-action-button
                   aria-label="行を削除"
                   @click=${() => this.removeRow(i)}
                 >
@@ -324,6 +333,10 @@ export class MvrBoard extends LitElement {
     this.renderRoot
       .querySelector(`.row:nth-child(${i + 1}) mv-panel:first-of-type`)
       ?.scrollIntoView({ block: 'center', inline: 'start' });
+  }
+
+  addRow(index: number) {
+    this.dispatchEvent(new CustomEvent('addrow', { detail: { index } }));
   }
 
   removeRow(index: number) {
