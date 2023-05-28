@@ -236,6 +236,8 @@ export class MvrBoard extends LitElement {
                     @headingchange=${(e: CustomEvent) =>
                       this.#handleHeadingChange(i, j, e)}
                     ${animate()}
+                    @clickduplicate=${() => this.#handleDuplicate(i, j)}
+                    @clickremove=${() => this.#handleRemove(i, j)}
                     data-src=${(src ?? '').split('/').at(-1)}
                   >
                     ${src
@@ -302,10 +304,6 @@ export class MvrBoard extends LitElement {
     this.dispatchEvent(new CustomEvent('removerow', { detail: { index } }));
   }
 
-  removePanel() {
-    this.dispatchEvent(new Event('panelremoved'));
-  }
-
   toggleRowHeader(value?: Boolean) {
     if (value === undefined) {
       this.rowHeaderExpanded = !this.rowHeaderExpanded;
@@ -357,6 +355,18 @@ export class MvrBoard extends LitElement {
       new CustomEvent('contentchange', {
         detail: { content, index: [rowIndex, colIndex] },
       })
+    );
+  }
+
+  #handleDuplicate(rowIndex: number, colIndex: number) {
+    this.dispatchEvent(
+      new CustomEvent('duplicate', { detail: { index: [rowIndex, colIndex] } })
+    );
+  }
+
+  #handleRemove(rowIndex: number, colIndex: number) {
+    this.dispatchEvent(
+      new CustomEvent('remove', { detail: { index: [rowIndex, colIndex] } })
     );
   }
 

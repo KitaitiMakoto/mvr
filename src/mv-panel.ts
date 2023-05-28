@@ -1,5 +1,9 @@
-import {LitElement, css, html} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import { LitElement, css, html } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
+
+import '@spectrum-web-components/action-button/sp-action-button.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-copy.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-delete.js';
 
 @customElement('mv-panel')
 export class MvPanel extends LitElement {
@@ -13,6 +17,7 @@ export class MvPanel extends LitElement {
       gap: 0.2rem;
       inline-size: 100%;
       block-size: 100%;
+      position: relative;
       padding: var(--padding);
       contain: content;
     }
@@ -28,7 +33,28 @@ export class MvPanel extends LitElement {
       box-sizing: border-box;
     }
 
-    .heading, .content, .folio {
+    sp-action-button {
+      display: none;
+
+      position: absolute;
+      inset-block-start: 0;
+    }
+
+    sp-action-button:first-of-type {
+      inset-inline-start: 0;
+    }
+
+    sp-action-button:last-of-type {
+      inset-inline-end: 0;
+    }
+
+    :host(:is(:hover, :active)) sp-action-button {
+      display: flex;
+    }
+
+    .heading,
+    .content,
+    .folio {
       inline-size: 100%;
     }
 
@@ -69,13 +95,13 @@ export class MvPanel extends LitElement {
     }
   `;
 
-  @property({type: Boolean, reflect: true})
+  @property({ type: Boolean, reflect: true })
   selected: boolean = false;
 
-  @property({reflect: true})
+  @property({ reflect: true })
   heading: string = '';
 
-  @property({reflect: true})
+  @property({ reflect: true })
   folio?: string;
 
   @query('input[name="heading"]')
@@ -85,7 +111,30 @@ export class MvPanel extends LitElement {
 
   render() {
     return html`
-      <h2 class="heading"><input name="heading" .value=${this.heading} placeholder="入力してください" @change=${this.#handleHeadingChange}></h2>
+      <sp-action-button
+        class="duplicate"
+        label="複製"
+        quiet
+        @click=${this.#handleClickDuplicate}
+      >
+        <sp-icon-copy slot="icon"></sp-icon-copy>
+      </sp-action-button>
+      <sp-action-button
+        class="remove"
+        label="削除"
+        quiet
+        @click=${this.#handleClickRemove}
+      >
+        <sp-icon-delete slot="icon"></sp-icon-delete>
+      </sp-action-button>
+      <h2 class="heading">
+        <input
+          name="heading"
+          .value=${this.heading}
+          placeholder="入力してください"
+          @change=${this.#handleHeadingChange}
+        />
+      </h2>
       <div class="content">
         <slot></slot>
       </div>
@@ -94,7 +143,19 @@ export class MvPanel extends LitElement {
   }
 
   #handleHeadingChange() {
-    this.dispatchEvent(new CustomEvent('headingchange', {detail: {value: this._$headingInput.value}}));
+    this.dispatchEvent(
+      new CustomEvent('headingchange', {
+        detail: { value: this._$headingInput.value },
+      })
+    );
+  }
+
+  #handleClickDuplicate() {
+    this.dispatchEvent(new MouseEvent('clickduplicate'));
+  }
+
+  #handleClickRemove() {
+    this.dispatchEvent(new MouseEvent('clickremove'));
   }
 }
 

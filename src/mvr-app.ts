@@ -157,14 +157,6 @@ export class MvrApp extends LitElement {
                 </div>
                 <div class="controls">
                   <sp-action-group>
-                    <sp-action-button @click=${this.#handleDuplicate}>
-                      複製
-                    </sp-action-button>
-                    <sp-action-button @click=${this.#handleRemove}>
-                      削除
-                    </sp-action-button>
-                  </sp-action-group>
-                  <sp-action-group>
                     <sp-action-button @click=${this.#handleForward}>
                       先へ
                     </sp-action-button>
@@ -192,10 +184,11 @@ export class MvrApp extends LitElement {
           .rowHeaderExpanded=${this._rowHeaderExpanded}
           @panelchange=${this.#handlePanelChange}
           @removerow=${this.#handleRemoveRow}
-          @panelremoved=${this.#handleRemove}
           @headingchange=${this.#handleHeadingChange}
           @rowheadingchange=${this.#handleRowHeadingChange}
           @contentchange=${this.#handleContentChange}
+          @duplicate=${this.#handleDuplicate}
+          @remove=${this.#handleRemove}
           @break=${this.#handleBreak}
           @unbreak=${this.#handleUnbreak}
         ></mvr-board>
@@ -400,17 +393,12 @@ export class MvrApp extends LitElement {
     this.requestUpdate();
   }
 
-  #handleDuplicate() {
-    if (!this.srcObject) {
-      return;
-    }
-    const index = this._selectedPanelIndex;
-    if (!index) {
-      return;
-    }
+  #handleDuplicate(event: CustomEvent) {
     const { srcObject: board } = this;
-    const rowIndex = index[0];
-    const colIndex = index[1];
+    if (!board) {
+      return;
+    }
+    const [rowIndex, colIndex] = event.detail.index as [number, number];
     const row = board.items[rowIndex];
     this.srcObject = {
       ...board,
@@ -427,23 +415,17 @@ export class MvrApp extends LitElement {
         ...board.items.slice(rowIndex + 1),
       ],
     };
-    this._selectedPanelIndex = [rowIndex, colIndex + 1];
   }
 
-  #handleRemove() {
-    if (!this.srcObject) {
-      return;
-    }
-    const index = this._selectedPanelIndex;
-    if (!index) {
+  #handleRemove(event: CustomEvent) {
+    const { srcObject: board } = this;
+    if (!board) {
       return;
     }
     if (!window.confirm('選択したパネルを削除しますか？')) {
       return;
     }
-    const { srcObject: board } = this;
-    const rowIndex = index[0];
-    const colIndex = index[1];
+    const [rowIndex, colIndex] = event.detail.index as [number, number];
     const row = board.items[rowIndex];
     this.srcObject = {
       ...board,
@@ -459,7 +441,6 @@ export class MvrApp extends LitElement {
         ...board.items.slice(rowIndex + 1),
       ],
     };
-    this._selectedPanelIndex = undefined;
   }
 
   #handleForward() {
