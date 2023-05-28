@@ -213,9 +213,7 @@ export class MvrBoard extends LitElement {
                 items.items,
                 ({ id }) => id,
                 ({ name, src, alt, content }, j) => html`
-                  <mvr-panel-border
-                    .divider=${j % 2 === 1 && j !== items.items.length - 1}
-                  ></mvr-panel-border>
+                  <mvr-panel-border .divider=${j % 2 === 1}></mvr-panel-border>
                   <mv-panel
                     heading=${name}
                     folio=${j}
