@@ -117,11 +117,6 @@ export class MvrApp extends LitElement {
           ? html`
               <div class="controls">
                 <sp-action-group>
-                  <sp-action-button @click=${this.#handleShare}>
-                    <sp-icon-share slot="icon"></sp-icon-share>共有
-                  </sp-action-button>
-                </sp-action-group>
-                <sp-action-group>
                   <sp-field-label>パネル幅</sp-field-label>
                   <sp-slider
                     id="panel-width"
@@ -134,6 +129,13 @@ export class MvrApp extends LitElement {
                     label-visibility="none"
                     style="min-inline-size: 12rem;"
                   ></sp-slider>
+                </sp-action-group>
+                <sp-action-group>
+                  <sp-action-button @click=${this.#handleShare}>
+                    <sp-icon-share slot="icon"></sp-icon-share>共有
+                  </sp-action-button>
+                </sp-action-group>
+                <sp-action-group>
                   <sp-action-button @click=${this.#handleToggleRowHeader}>
                     ${this._rowHeaderExpanded ? '縮小' : '拡大'}
                   </sp-action-button>
