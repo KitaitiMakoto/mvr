@@ -9,6 +9,7 @@ import '@spectrum-web-components/icons-workflow/icons/sp-icon-table-row-remove-c
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-home.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-layers-backward.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-layers-forward.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-text-add.js';
 
 import './mv-panel.js';
 import type { MvPanel } from './mv-panel.js';
@@ -158,8 +159,13 @@ export class MvrBoard extends LitElement {
 
     [slot='popover'] {
       display: flex;
-      flex-direction: var(--row-direction);
+      flex-direction: column;
       gap: var(--spectrum-spacing-200);
+    }
+
+    [slot='popover'] .breaks {
+      flex-wrap: nowrap;
+      flex-direction: var(--row-direction);
       inline-size: max-content;
     }
   `;
@@ -230,7 +236,7 @@ export class MvrBoard extends LitElement {
                 items.items,
                 ({ id }) => id,
                 ({ name, src, alt, content }, j) => html`
-                  <mvr-panel-border .divider=${j % 2 === 1}>
+                  <mvr-panel-border .divider=${j % 2 === 1} ${animate()}>
                     ${this.#renderBorderPopover(i, j)}
                   </mvr-panel-border>
                   <mv-panel
@@ -264,7 +270,7 @@ export class MvrBoard extends LitElement {
                   </mv-panel>
                 `
               )}
-              <mvr-panel-border>
+              <mvr-panel-border ${animate()}>
                 ${this.#renderBorderPopover(i, items.items.length)}
               </mvr-panel-border>
             </div>
@@ -277,18 +283,28 @@ export class MvrBoard extends LitElement {
   #renderBorderPopover(rowIndex: number, colIndex: number) {
     return html`
       <div slot="popover">
-        <sp-action-button
-          @click=${() => this.#handleClickUnbreak(rowIndex, colIndex)}
-        >
-          <sp-icon-layers-forward slot="icon"></sp-icon-layers-forward
-          >ここまで前の行へ
-        </sp-action-button>
-        <sp-action-button
-          @click=${() => this.#handleClickBreak(rowIndex, colIndex)}
-        >
-          <sp-icon-layers-backward slot="icon"></sp-icon-layers-backward
-          >折り返す
-        </sp-action-button>
+        <sp-action-group class="addition">
+          <sp-action-button
+            @click=${() => this.#handleClickAddText(rowIndex, colIndex)}
+          >
+            <sp-icon-text-add slot="icon"></sp-icon-text-add>
+            テキスト
+          </sp-action-button>
+        </sp-action-group>
+        <sp-action-group class="breaks">
+          <sp-action-button
+            @click=${() => this.#handleClickUnbreak(rowIndex, colIndex)}
+          >
+            <sp-icon-layers-forward slot="icon"></sp-icon-layers-forward
+            >ここまで前の行へ
+          </sp-action-button>
+          <sp-action-button
+            @click=${() => this.#handleClickBreak(rowIndex, colIndex)}
+          >
+            <sp-icon-layers-backward slot="icon"></sp-icon-layers-backward
+            >折り返す
+          </sp-action-button>
+        </sp-action-group>
       </div>
     `;
   }
@@ -390,6 +406,20 @@ export class MvrBoard extends LitElement {
     this.dispatchEvent(
       new CustomEvent('back', { detail: { index: [rowIndex, colIndex] } })
     );
+  }
+
+  #handleClickAddText(rowIndex: number, colIndex: number) {
+    this.dispatchEvent(
+      new CustomEvent('addtext', { detail: { index: [rowIndex, colIndex] } })
+    );
+    const border = this.renderRoot.querySelector<MvrPanelBorder>(
+      `.row:nth-child(${rowIndex + 1}) mvr-panel-border:nth-of-type(${
+        colIndex + 1
+      })`
+    );
+    if (border) {
+      border.popoverOpen = false;
+    }
   }
 
   #handleClickBreak(rowIndex: number, colIndex: number) {

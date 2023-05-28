@@ -117,10 +117,6 @@ export class MvrApp extends LitElement {
           ? html`
               <div class="controls">
                 <sp-action-group>
-                  <sp-action-button @click=${this.#handleAddText}>
-                    <sp-icon-text-add slot="icon"></sp-icon-text-add>
-                    テキスト
-                  </sp-action-button>
                   <sp-action-button @click=${this.#handleAddRow}>
                     <sp-icon-feed-add slot="icon"></sp-icon-feed-add>
                     行
@@ -174,6 +170,7 @@ export class MvrApp extends LitElement {
           @remove=${this.#handleRemove}
           @forward=${this.#handleForward2}
           @back=${this.#handleBack2}
+          @addtext=${this.#handleAddText}
           @break=${this.#handleBreak}
           @unbreak=${this.#handleUnbreak}
         ></mvr-board>
@@ -295,33 +292,27 @@ export class MvrApp extends LitElement {
     };
   }
 
-  #handleAddText() {
-    if (!this.srcObject) {
-      return;
-    }
-    const index = this._selectedPanelIndex;
-    if (!index) {
-      return;
-    }
-    const row = index[0];
-    const column = index[1];
+  #handleAddText(event: CustomEvent) {
     const { srcObject: board } = this;
+    if (!board) {
+      return;
+    }
+    const [rowIndex, colIndex] = event.detail.index as [number, number];
     this.srcObject = {
       ...board,
       items: [
-        ...board.items.slice(0, row),
+        ...board.items.slice(0, rowIndex),
         {
-          ...board.items[row],
+          ...board.items[rowIndex],
           items: [
-            ...board.items[row].items.slice(0, column + 1),
+            ...board.items[rowIndex].items.slice(0, colIndex),
             { id: crypto.randomUUID() },
-            ...board.items[row].items.slice(column + 1),
+            ...board.items[rowIndex].items.slice(colIndex),
           ],
         },
-        ...board.items.slice(row + 1),
+        ...board.items.slice(rowIndex + 1),
       ],
     };
-    this._selectedPanelIndex = [index[0], index[1] + 1];
   }
 
   #handleAddRow() {
