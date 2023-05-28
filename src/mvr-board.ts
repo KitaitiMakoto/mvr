@@ -113,30 +113,36 @@ export class MvrBoard extends LitElement {
       inline-size: var(--panel-width, 10vw);
     }
 
-    .row mv-panel > * {
+    .panel-content {
+      inline-size: 100%;
+      block-size: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .panel-content > * {
       max-inline-size: 100%;
       max-block-size: 100%;
     }
 
+    .panel-content img {
+      block-size: 100%;
+      object-fit: scale-down;
+    }
+
+    .panel-content .source {
+      flex-shrink: 0;
+      margin: 0;
+    }
+
+    .panel-content textarea {
+      block-size: 100%;
+    }
+
     mv-panel {
       background-color: var(--spectrum-global-color-gray-50);
-    }
-
-    mv-panel:hover::after {
-      content: attr(data-src);
-      position: absolute;
-      inset-block-end: 0;
-      inset-inline: 0;
-      display: block;
-      box-sizing: border-box;
-      inline-size: 100%;
-      padding: 0.5rem;
-      background-color: rgba(200, 200, 200, 0.5);
-      color: black;
-    }
-
-    mv-panel[data-src='']:hover::after {
-      display: none;
     }
 
     mvr-panel-border {
@@ -238,19 +244,21 @@ export class MvrBoard extends LitElement {
                     ${animate()}
                     @clickduplicate=${() => this.#handleDuplicate(i, j)}
                     @clickremove=${() => this.#handleRemove(i, j)}
-                    data-src=${(src ?? '').split('/').at(-1)}
                   >
-                    ${src
-                      ? html`<img src=${src} alt=${alt} loading="lazy" />`
-                      : html`<textarea
-                          .value=${content ?? ''}
-                          @change=${(e: Event) =>
-                            this.#handleContentChange(
-                              i,
-                              j,
-                              (e.currentTarget as HTMLTextAreaElement)?.value
-                            )}
-                        ></textarea>`}
+                    <div class="panel-content">
+                      ${src
+                        ? html`<img src=${src} alt=${alt} loading="lazy" />`
+                        : html`<textarea
+                            .value=${content ?? ''}
+                            @change=${(e: Event) =>
+                              this.#handleContentChange(
+                                i,
+                                j,
+                                (e.currentTarget as HTMLTextAreaElement)?.value
+                              )}
+                          ></textarea>`}
+                      <p class="source">${(src ?? '').split('/').at(-1)}</p>
+                    </div>
                   </mv-panel>
                 `
               )}
