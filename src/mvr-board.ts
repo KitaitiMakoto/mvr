@@ -181,7 +181,7 @@ export class MvrBoard extends LitElement {
             >
               <h2>
                 <input
-                  .value="${items.name}"
+                  .value="${items.name ?? ''}"
                   placeholder="入力してください"
                   @change=${(e: Event) =>
                     this.#handleRowHeadingChange(i, e.currentTarget)}
