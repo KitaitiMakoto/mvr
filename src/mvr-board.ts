@@ -250,7 +250,10 @@ export class MvrBoard extends LitElement {
                 items.items,
                 ({ id }) => id,
                 ({ name, src, alt, content }, j) => html`
-                  <mvr-panel-border .divider=${j % 2 === 1} ${animate()}>
+                  <mvr-panel-border
+                    .divider=${j % 2 === 0 && j !== 0}
+                    ${animate()}
+                  >
                     ${this.#renderBorderPopover(i, j)}
                   </mvr-panel-border>
                   <mv-panel
