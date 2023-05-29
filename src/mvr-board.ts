@@ -111,9 +111,10 @@ export class MvrBoard extends LitElement {
       scroll-behavior: smooth;
     }
 
-    .row mv-panel {
+    mv-panel {
       flex-shrink: 0;
       inline-size: var(--panel-width, 10vw);
+      background-color: var(--spectrum-global-color-gray-50);
     }
 
     .panel-content {
@@ -142,10 +143,6 @@ export class MvrBoard extends LitElement {
 
     .panel-content textarea {
       block-size: 100%;
-    }
-
-    mv-panel {
-      background-color: var(--spectrum-global-color-gray-50);
     }
 
     mvr-panel-border {
