@@ -163,8 +163,8 @@ export class MvrApp extends LitElement {
           @contentchange=${this.#handleContentChange}
           @duplicate=${this.#handleDuplicate}
           @remove=${this.#handleRemove}
-          @forward=${this.#handleForward2}
-          @back=${this.#handleBack2}
+          @forward=${this.#handleForward}
+          @back=${this.#handleBack}
           @addtext=${this.#handleAddText}
           @addrow=${this.#handleAddRow}
           @break=${this.#handleBreak}
@@ -371,7 +371,7 @@ export class MvrApp extends LitElement {
     };
   }
 
-  #handleForward2(event: CustomEvent) {
+  #handleForward(event: CustomEvent) {
     const { srcObject: board } = this;
     if (!board) {
       return;
@@ -399,7 +399,7 @@ export class MvrApp extends LitElement {
     };
   }
 
-  #handleBack2(event: CustomEvent) {
+  #handleBack(event: CustomEvent) {
     const { srcObject: board } = this;
     if (!board) {
       return;
