@@ -218,6 +218,7 @@ export class MvrApp extends LitElement {
         },
         items: board.items.map(items => ({
           ...items,
+          id: items.id ?? crypto.randomUUID(),
           items: items.items.map(({ id, ...i }) => ({
             ...i,
             id: id ?? crypto.randomUUID(),
@@ -284,7 +285,7 @@ export class MvrApp extends LitElement {
       ...board,
       items: [
         ...board.items.slice(0, rowIndex),
-        { name: '', items: [] },
+        { id: crypto.randomUUID(), name: '', items: [] },
         ...board.items.slice(rowIndex),
       ],
     };
@@ -436,7 +437,7 @@ export class MvrApp extends LitElement {
     const row = board.items[rowIndex];
     const nextRow =
       rowIndex === board.items.length - 1
-        ? { name: '', items: [] }
+        ? { id: crypto.randomUUID(), name: '', items: [] }
         : board.items[rowIndex + 1];
     if (colIndex >= row.items.length) {
       return;

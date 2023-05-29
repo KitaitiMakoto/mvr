@@ -25,6 +25,7 @@ export interface Board {
     panelWidth: string;
   };
   items: {
+    id: ID;
     name: string;
     items: {
       id: ID;
@@ -195,10 +196,14 @@ export class MvrBoard extends LitElement {
       return html`<p>Loading...</p>`;
     }
 
+    const rows = this.srcObject.items.length;
+
     return html`
-      ${this.srcObject.items.map(
-        (items, i, rows) => html`
-          <div class="row">
+      ${repeat(
+        this.srcObject.items,
+        ({ id }) => id,
+        (items, i) => html`
+          <div class="row" ${animate()}>
             <div
               class="header"
               aria-expanded="${this.rowHeaderExpanded ? 'true' : 'false'}"
@@ -237,7 +242,7 @@ export class MvrBoard extends LitElement {
               </sp-action-group>
               <div class="info">
                 <div class="panel-count">${items.items.length}枚</div>
-                <div class="row-number">${i + 1}/${rows.length}行目</div>
+                <div class="row-number">${i + 1}/${rows}行目</div>
               </div>
             </div>
             <div class="items">
