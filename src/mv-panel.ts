@@ -25,13 +25,6 @@ export class MvPanel extends LitElement {
       contain: content;
     }
 
-    :host([selected]) {
-      --border-width: 2px;
-
-      border: solid var(--border-width) black;
-      padding: calc(var(--padding) - var(--border-width));
-    }
-
     * {
       box-sizing: border-box;
     }
@@ -107,9 +100,6 @@ export class MvPanel extends LitElement {
       object-fit: scale-down;
     }
   `;
-
-  @property({ type: Boolean, reflect: true })
-  selected: boolean = false;
 
   @property({ reflect: true })
   heading: string = '';

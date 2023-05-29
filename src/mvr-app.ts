@@ -84,9 +84,6 @@ export class MvrApp extends LitElement {
   private _error?: string;
 
   @state()
-  private _selectedPanelIndex?: [number, number];
-
-  @state()
   private _rowHeaderExpanded: Boolean = true;
 
   @query('#panel-width')
@@ -154,9 +151,7 @@ export class MvrApp extends LitElement {
           : undefined}
         <mvr-board
           .srcObject=${this.srcObject}
-          .selectedPanelIndex=${this._selectedPanelIndex}
           .rowHeaderExpanded=${this._rowHeaderExpanded}
-          @panelchange=${this.#handlePanelChange}
           @removerow=${this.#handleRemoveRow}
           @headingchange=${this.#handleHeadingChange}
           @rowheadingchange=${this.#handleRowHeadingChange}
@@ -305,15 +300,6 @@ export class MvrApp extends LitElement {
       ...board,
       items: [...board.items.slice(0, index), ...board.items.slice(index + 1)],
     };
-    if (!this._selectedPanelIndex) {
-      return;
-    }
-    const rowIndex = this._selectedPanelIndex[0];
-    if (index === rowIndex) {
-      this._selectedPanelIndex = undefined;
-    } else if (index < rowIndex) {
-      this._selectedPanelIndex = [rowIndex - 1, this._selectedPanelIndex[1]];
-    }
   }
 
   #handleShare() {
@@ -484,10 +470,6 @@ export class MvrApp extends LitElement {
         ...board.items.slice(rowIndex + 1),
       ],
     };
-  }
-
-  #handlePanelChange(event: CustomEvent) {
-    this._selectedPanelIndex = event.detail.index;
   }
 
   #handleHeadingChange(event: CustomEvent) {

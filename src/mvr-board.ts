@@ -170,23 +170,10 @@ export class MvrBoard extends LitElement {
   `;
 
   @state()
-  selectedPanelIndex?: [number, number];
-
-  @state()
   srcObject?: Board;
 
   @state()
   rowHeaderExpanded: Boolean = true;
-
-  get selectedPanel() {
-    if (!this.selectedPanelIndex) {
-      return null;
-    }
-    const [row, col] = this.selectedPanelIndex;
-    return this.renderRoot.querySelector<MvPanel>(
-      `.row:nth-child(${row + 1}) mv-panel:nth-of-type(${col + 1})`
-    );
-  }
 
   render() {
     if (!this.srcObject) {
@@ -256,8 +243,6 @@ export class MvrBoard extends LitElement {
                   <mv-panel
                     heading=${name}
                     folio=${j}
-                    .selected=${i === this.selectedPanelIndex?.[0] &&
-                    j === this.selectedPanelIndex?.[1]}
                     @focusin="${this.#handleFocusIn}"
                     @headingchange=${(e: CustomEvent) =>
                       this.#handleHeadingChange(i, j, e)}
@@ -354,10 +339,6 @@ export class MvrBoard extends LitElement {
     } else {
       this.rowHeaderExpanded = value;
     }
-  }
-
-  scrollIntoSelectedPanel() {
-    this.selectedPanel?.scrollIntoView({ block: 'center', inline: 'center' });
   }
 
   #handleFocusIn(event: FocusEvent) {
