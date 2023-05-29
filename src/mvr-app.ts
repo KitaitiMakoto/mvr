@@ -229,11 +229,8 @@ export class MvrApp extends LitElement {
     }
   }
 
-  // FIXME: Integrate setting custom property and setting and passing srcObject
-  // currently they're separated by performance reason.
   #handlePanelWidthChange() {
     const panelWidth = `${this._$panelWidth.value}vw`;
-    this._$board?.style.setProperty('--panel-width', panelWidth);
     const board = this.srcObject;
     if (!board) {
       return;
