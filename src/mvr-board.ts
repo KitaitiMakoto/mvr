@@ -52,10 +52,12 @@ export class MvrBoard extends LitElement {
     }
 
     .row {
+      --padding: 1rem;
+
       display: flex;
       flex-direction: var(--row-direction);
-      gap: 1rem;
-      padding-block: 1rem;
+      padding-block: var(--padding);
+      block-size: calc(var(--panel-width, 10vw) * 4 / 3 + var(--padding) * 2);
     }
 
     .header {
@@ -66,12 +68,15 @@ export class MvrBoard extends LitElement {
       align-content: flex-start;
       gap: 0.5rem;
       block-size: calc(var(--panel-width, 10vw) * 4 / 3);
+      border-inline-start: 1px solid rgb(200, 200, 200);
+      padding: 0.5rem;
       transition: inline-size var(--spectrum-global-animation-duration-100);
       background-color: var(--spectrum-global-color-gray-100);
     }
 
     .header[aria-expanded='false'] {
       inline-size: 32px; /* FIXME */
+      padding: 0;
     }
 
     .row h2 {

@@ -229,7 +229,7 @@ export class MvrApp extends LitElement {
     }
   }
 
-  #handlePanelWidthChange() {
+  async #handlePanelWidthChange() {
     const panelWidth = `${this._$panelWidth.value}vw`;
     const board = this.srcObject;
     if (!board) {
