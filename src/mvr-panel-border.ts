@@ -23,6 +23,7 @@ export class MvrPanelBorder extends LitElement {
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
     }
 
     button {
@@ -55,7 +56,11 @@ export class MvrPanelBorder extends LitElement {
         <button type="button" @click=${this.#handleClickOpen}>
           ${this.divider ? html`<hr />` : undefined}
         </button>
-        <sp-popover .open=${this.popoverOpen && this.#slotted}>
+        <sp-popover
+          tip
+          placement="top"
+          .open=${this.popoverOpen && this.#slotted}
+        >
           <slot name="popover"></slot>
         </sp-popover>
       </div>
