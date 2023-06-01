@@ -1,7 +1,7 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type { Meta, StoryObj } from '@storybook/web-components';
 
 import '../../out-tsc/src/mv-assets.js';
-import type {MvAssets} from '../mv-assets';
+import type { MvAssets } from '../mv-assets';
 
 const meta: Meta<MvAssets> = {
   title: 'Mv/Assets',
@@ -9,9 +9,9 @@ const meta: Meta<MvAssets> = {
   argTypes: {
     direction: {
       control: 'select',
-      options: ['ltr', 'rtl']
-    }
-  }
+      options: ['ltr', 'rtl'],
+    },
+  },
 };
 
 export default meta;
@@ -22,6 +22,6 @@ export const Default: Story = {
   args: {
     open: true,
     src: '/assets/assets.json',
-    direction: 'rtl'
-  }
-}
+    direction: 'rtl',
+  },
+};

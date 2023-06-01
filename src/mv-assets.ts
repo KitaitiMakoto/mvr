@@ -1,20 +1,25 @@
-import {LitElement, css, html} from 'lit';
-import {customElement, property, state} from 'lit/decorators.js';
+import { LitElement, css, html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+
+interface Image {
+  contentUrl: string;
+  name?: string;
+}
 
 interface Images {
   name?: string;
-  items: {
-    src: string;
-  }[];
+  items: Image[];
 }
 
 interface ImagesList {
   items: Images[];
 }
 
-type Assets = Images | {
-  items: Images[]
-};
+type Assets =
+  | Images
+  | {
+      items: Images[];
+    };
 
 function isImagesList(assets: Assets): assets is ImagesList {
   return 'items' in assets;
@@ -53,7 +58,7 @@ export class MvAssets extends LitElement {
         position: relative;
       }
 
-      input[type="checkbox"] {
+      input[type='checkbox'] {
         position: absolute;
         inset-block-start: 0;
         inset-inline-start: 0;
@@ -70,74 +75,83 @@ export class MvAssets extends LitElement {
       img {
         max-width: 100%;
       }
-    `
+    `,
   ];
 
   render() {
-    if (! this.open) {
-      return;
+    if (!this.open) {
+      return undefined;
     }
 
     if (this._error) {
       return html`<p>${this._error}</p>`;
     }
 
-    if (! this.src) {
+    if (!this.src) {
       return html`<p>ソースが設定されていません</p>`;
     }
 
-    if (! this.srcObject) {
+    if (!this.srcObject) {
       return html`<p>Loading...</p>`;
     }
 
     if (isImagesList(this.srcObject)) {
       return html`
-        <ul class='images-list'>
-          ${this.srcObject.items.map(item => html`
-            <li>
-              ${this.#renderImages(item)}
-            </li>
-          `)}
+        <ul class="images-list">
+          ${this.srcObject.items.map(
+            item => html` <li>${this.#renderImages(item)}</li> `
+          )}
         </ul>
-      `
+      `;
     }
 
     return this.#renderImages(this.srcObject);
   }
 
-  #renderImages({name, items: images}: Images) {
+  // eslint-disable-next-line class-methods-use-this
+  #renderImages({ name, items: images }: Images) {
     return html`
       ${name === undefined ? undefined : html`<h2>${name}</h2>`}
-      <ul class='images'>
-        ${images.map(({src}) => html`
-          <li>
-            <input type="checkbox">
-            <figure>
-              <img src='${src}' alt=''>
-              <figcaption>${new URL(src, location.href).pathname.split('/').at(-1)}</figcaption>
-            </figure>
-          </li>
-        `)}
+      <ul class="images">
+        ${images.map(
+          ({ contentUrl, name: caption }) => html`
+            <li>
+              <figure>
+                <img src="${contentUrl}" alt="" />
+                <figcaption>
+                  ${caption ??
+                  new URL(contentUrl, window.location.href).pathname
+                    .split('/')
+                    .at(-1)}
+                </figcaption>
+              </figure>
+            </li>
+          `
+        )}
       </ul>
     `;
   }
 
-  @property({type: Boolean, reflect: true})
+  @property({ type: Boolean, reflect: true })
   open = false;
 
-  @property({reflect: true})
+  @property({ reflect: true })
   src = '';
 
   @property()
   srcObject: Assets | null = null;
 
-  @property({reflect: true})
+  @property({ reflect: true })
   direction: 'ltr' | 'rtl' = 'rtl';
 
   @state()
   private _error?: string;
 
-  attributeChangedCallback(name: string, old: string | null, value: string | null): void {
+  attributeChangedCallback(
+    name: string,
+    old: string | null,
+    value: string | null
+  ): void {
     super.attributeChangedCallback?.(name, old, value);
     switch (name) {
       case 'src':
@@ -146,7 +160,7 @@ export class MvAssets extends LitElement {
         } else {
           this.srcObject = null;
         }
-      break;
+        break;
       case 'direction':
         switch (value) {
           case 'ltr':
@@ -155,17 +169,19 @@ export class MvAssets extends LitElement {
           case 'rtl':
             this.style.setProperty('--direction', 'rtl');
             break;
+          default:
         }
         break;
+      default:
     }
   }
 
   async #load() {
     this._error = undefined;
     this.srcObject = null;
-    this.srcObject = await fetch(this.src).then(res => res.json())
+    this.srcObject = await fetch(this.src)
+      .then(res => res.json())
       .catch(err => {
-        console.debug(err);
         this._error = err;
         this.dispatchEvent(new ErrorEvent(err));
       });

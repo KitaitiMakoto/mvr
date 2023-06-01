@@ -4,16 +4,16 @@
       "name": "Configure",
       "items": [
         {
-          "src": "/static/media/src/stories/assets/plugin.svg"
+          "contentUrl": "/static/media/src/stories/assets/plugin.svg"
         },
         {
-          "src": "/static/media/src/stories/assets/stackalt.svg"
+          "contentUrl": "/static/media/src/stories/assets/stackalt.svg"
         },
         {
-          "src": "/static/media/src/stories/assets/colors.svg"
+          "contentUrl": "/static/media/src/stories/assets/colors.svg"
         },
         {
-          "src": "/static/media/src/stories/assets/flow.svg"
+          "contentUrl": "/static/media/src/stories/assets/flow.svg"
         }
       ]
     },
@@ -21,16 +21,16 @@
       "name": "Learn",
       "items": [
         {
-          "src": "/static/media/src/stories/assets/repo.svg"
+          "contentUrl": "/static/media/src/stories/assets/repo.svg"
         },
         {
-          "src": "/static/media/src/stories/assets/direction.svg"
+          "contentUrl": "/static/media/src/stories/assets/direction.svg"
         },
         {
-          "src": "/static/media/src/stories/assets/code-brackets.svg"
+          "contentUrl": "/static/media/src/stories/assets/code-brackets.svg"
         },
         {
-          "src": "/static/media/src/stories/assets/comments.svg"
+          "contentUrl": "/static/media/src/stories/assets/comments.svg"
         }
       ]
     }
