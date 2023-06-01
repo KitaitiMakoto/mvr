@@ -75,6 +75,12 @@ export class MvAssets extends LitElement {
       img {
         max-width: 100%;
       }
+
+      button {
+        display: contents;
+        border: none;
+        background-color: transparent;
+      }
     `,
   ];
 
@@ -108,23 +114,24 @@ export class MvAssets extends LitElement {
     return this.#renderImages(this.srcObject);
   }
 
-  // eslint-disable-next-line class-methods-use-this
   #renderImages({ name, items: images }: Images) {
     return html`
       ${name === undefined ? undefined : html`<h2>${name}</h2>`}
       <ul class="images">
         ${images.map(
-          ({ contentUrl, name: caption }) => html`
+          image => html`
             <li>
-              <figure>
-                <img src="${contentUrl}" alt="" />
-                <figcaption>
-                  ${caption ??
-                  new URL(contentUrl, window.location.href).pathname
-                    .split('/')
-                    .at(-1)}
-                </figcaption>
-              </figure>
+              <button type="button" @click=${() => this.#handleClick(image)}>
+                <figure>
+                  <img src="${image.contentUrl}" alt="${image.name}" />
+                  <figcaption>
+                    ${image.name ??
+                    new URL(image.contentUrl, window.location.href).pathname
+                      .split('/')
+                      .at(-1)}
+                  </figcaption>
+                </figure>
+              </button>
             </li>
           `
         )}
@@ -186,5 +193,9 @@ export class MvAssets extends LitElement {
         this.dispatchEvent(new ErrorEvent(err));
       });
     this.dispatchEvent(new Event('load'));
+  }
+
+  #handleClick(image: Image) {
+    this.dispatchEvent(new CustomEvent('clickasset', { detail: { image } }));
   }
 }
