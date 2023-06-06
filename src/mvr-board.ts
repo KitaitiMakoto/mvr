@@ -76,7 +76,7 @@ export class MvrBoard extends LitElement {
 
     .header[aria-expanded='false'] {
       inline-size: 32px; /* FIXME */
-      padding: 0;
+      padding-inline: 0;
     }
 
     .row h2 {
