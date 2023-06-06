@@ -123,6 +123,8 @@ export class MvrBoard extends LitElement {
     }
 
     .panel-content {
+      --source-height: 1rem;
+
       inline-size: 100%;
       block-size: 100%;
       display: flex;
@@ -137,13 +139,14 @@ export class MvrBoard extends LitElement {
     }
 
     .panel-content img {
-      block-size: 100%;
+      block-size: calc(100% - var(--source-height));
       object-fit: scale-down;
     }
 
     .panel-content .source {
       flex-shrink: 0;
       margin: 0;
+      block-size: var(--source-height);
     }
 
     .panel-content textarea {
