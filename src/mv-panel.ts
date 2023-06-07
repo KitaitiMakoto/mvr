@@ -57,6 +57,7 @@ export class MvPanel extends LitElement {
       margin: 0;
       line-height: 1;
       text-align: center;
+      font-weight: bolder;
     }
 
     input {
@@ -65,6 +66,11 @@ export class MvPanel extends LitElement {
       border: none;
       background-color: transparent;
       text-align: inherit;
+      font-weight: inherit;
+    }
+
+    .heading input::placeholder {
+      font-weight: normal;
     }
 
     .content {
