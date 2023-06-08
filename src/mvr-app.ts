@@ -110,31 +110,7 @@ export class MvrApp extends LitElement {
 
     return html`
       <sp-theme scale="medium" color="light">
-        ${this.controls
-          ? html`
-              <div class="controls">
-                <sp-action-group>
-                  <sp-field-label>パネル幅</sp-field-label>
-                  <sp-slider
-                    id="panel-width"
-                    min="5"
-                    .value=${Number.parseInt(
-                      this.srcObject.preferences?.panelWidth ?? '10',
-                      10
-                    )}
-                    @input=${this.#handlePanelWidthChange}
-                    label-visibility="none"
-                    style="min-inline-size: 12rem;"
-                  ></sp-slider>
-                </sp-action-group>
-                <sp-action-group>
-                  <sp-action-button @click=${this.#handleToggleRowHeader}>
-                    ${this._rowHeaderExpanded ? '縮小' : '拡大'}
-                  </sp-action-button>
-                </sp-action-group>
-              </div>
-            `
-          : undefined}
+        ${this.controls ? this.#renderControls() : undefined}
         <mvr-board
           .srcObject=${this.srcObject}
           .rowHeaderExpanded=${this._rowHeaderExpanded}
@@ -152,6 +128,32 @@ export class MvrApp extends LitElement {
           @unbreak=${this.#handleUnbreak}
         ></mvr-board>
       </sp-theme>
+    `;
+  }
+
+  #renderControls() {
+    return html`
+      <div class="controls">
+        <sp-action-group>
+          <sp-field-label>パネル幅</sp-field-label>
+          <sp-slider
+            id="panel-width"
+            min="5"
+            .value=${Number.parseInt(
+              this.srcObject?.preferences?.panelWidth ?? '10',
+              10
+            )}
+            @input=${this.#handlePanelWidthChange}
+            label-visibility="none"
+            style="min-inline-size: 12rem;"
+          ></sp-slider>
+        </sp-action-group>
+        <sp-action-group>
+          <sp-action-button @click=${this.#handleToggleRowHeader}>
+            ${this._rowHeaderExpanded ? '縮小' : '拡大'}
+          </sp-action-button>
+        </sp-action-group>
+      </div>
     `;
   }
 
