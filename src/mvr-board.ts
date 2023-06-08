@@ -235,20 +235,7 @@ export class MvrBoard extends LitElement {
                     @clickback=${() => this.#handleBack(i, j)}
                     style=${panelStyle}
                   >
-                    <div class="panel-content">
-                      ${src
-                        ? html`<img src=${src} alt=${alt} loading="lazy" />`
-                        : html`<textarea
-                            .value=${content ?? ''}
-                            @change=${(e: Event) =>
-                              this.#handleContentChange(
-                                i,
-                                j,
-                                (e.currentTarget as HTMLTextAreaElement)?.value
-                              )}
-                          ></textarea>`}
-                      <p class="source">${(src ?? '').split('/').at(-1)}</p>
-                    </div>
+                    ${this.#renderPanelContent(i, j, src, alt, content)}
                   </mv-panel>
                 `
               )}
@@ -310,6 +297,31 @@ export class MvrBoard extends LitElement {
           <div class="panel-count">${items.items.length}枚</div>
           <div class="row-number">${index + 1}/${rows}行目</div>
         </div>
+      </div>
+    `;
+  }
+
+  #renderPanelContent(
+    rowIndex: number,
+    colIndex: number,
+    src?: string,
+    alt?: string,
+    content?: string
+  ) {
+    return html`
+      <div class="panel-content">
+        ${src
+          ? html`<img src=${src} alt=${alt} loading="lazy" />`
+          : html`<textarea
+              .value=${content ?? ''}
+              @change=${(e: Event) =>
+                this.#handleContentChange(
+                  rowIndex,
+                  colIndex,
+                  (e.currentTarget as HTMLTextAreaElement)?.value
+                )}
+            ></textarea>`}
+        <p class="source">${(src ?? '').split('/').at(-1)}</p>
       </div>
     `;
   }
