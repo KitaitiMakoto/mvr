@@ -210,48 +210,7 @@ export class MvrBoard extends LitElement {
         ({ id }) => id,
         (items, i) => html`
           <div class="row" ${animate()}>
-            <div
-              class="header"
-              aria-expanded="${this.rowHeaderExpanded ? 'true' : 'false'}"
-              style=${headerStyle}
-            >
-              <h2>
-                <input
-                  .value="${items.name ?? ''}"
-                  placeholder="入力してください"
-                  @change=${(e: Event) =>
-                    this.#handleRowHeadingChange(i, e.currentTarget)}
-                />
-              </h2>
-              <sp-action-group>
-                <sp-action-button
-                  aria-label="行を先頭に戻す"
-                  @click=${() => this.goHome(i)}
-                >
-                  <sp-icon-home slot="icon"></sp-icon-home>
-                </sp-action-button>
-                <sp-action-button
-                  label="行を下に追加"
-                  @click=${() => this.addRow(i + 1)}
-                >
-                  <sp-icon-table-row-add-bottom
-                    slot="icon"
-                  ></sp-icon-table-row-add-bottom>
-                </sp-action-button>
-                <sp-action-button
-                  aria-label="行を削除"
-                  @click=${() => this.removeRow(i)}
-                >
-                  <sp-icon-table-row-remove-center
-                    slot="icon"
-                  ></sp-icon-table-row-remove-center>
-                </sp-action-button>
-              </sp-action-group>
-              <div class="info">
-                <div class="panel-count">${items.items.length}枚</div>
-                <div class="row-number">${i + 1}/${rows}行目</div>
-              </div>
-            </div>
+            ${this.#renderRowHeader(i, items, rows, headerStyle)}
             <div class="items">
               ${repeat(
                 items.items,
@@ -300,6 +259,58 @@ export class MvrBoard extends LitElement {
           </div>
         `
       )}
+    `;
+  }
+
+  #renderRowHeader(
+    index: number,
+    items: Board['items'][number],
+    rows: number,
+    style: ReturnType<typeof styleMap>
+  ) {
+    return html`
+      <div
+        class="header"
+        aria-expanded="${this.rowHeaderExpanded ? 'true' : 'false'}"
+        style=${style}
+      >
+        <h2>
+          <input
+            .value="${items.name ?? ''}"
+            placeholder="入力してください"
+            @change=${(e: Event) =>
+              this.#handleRowHeadingChange(index, e.currentTarget)}
+          />
+        </h2>
+        <sp-action-group>
+          <sp-action-button
+            aria-label="行を先頭に戻す"
+            @click=${() => this.goHome(index)}
+          >
+            <sp-icon-home slot="icon"></sp-icon-home>
+          </sp-action-button>
+          <sp-action-button
+            label="行を下に追加"
+            @click=${() => this.addRow(index + 1)}
+          >
+            <sp-icon-table-row-add-bottom
+              slot="icon"
+            ></sp-icon-table-row-add-bottom>
+          </sp-action-button>
+          <sp-action-button
+            aria-label="行を削除"
+            @click=${() => this.removeRow(index)}
+          >
+            <sp-icon-table-row-remove-center
+              slot="icon"
+            ></sp-icon-table-row-remove-center>
+          </sp-action-button>
+        </sp-action-group>
+        <div class="info">
+          <div class="panel-count">${items.items.length}枚</div>
+          <div class="row-number">${index + 1}/${rows}行目</div>
+        </div>
+      </div>
     `;
   }
 
