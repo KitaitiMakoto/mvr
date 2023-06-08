@@ -121,8 +121,11 @@ export class MvrApp extends LitElement {
           ></sp-slider>
         </sp-action-group>
         <sp-action-group>
-          <sp-action-button @click=${this.#handleToggleRowHeader}>
-            ${this._rowHeaderExpanded ? '縮小' : '拡大'}
+          <sp-action-button
+            .selected=${this._rowHeaderExpanded}
+            @click=${this.#handleToggleRowHeader}
+          >
+            ヘッダー
           </sp-action-button>
         </sp-action-group>
       </div>

@@ -62,7 +62,7 @@ export class MvrBoard extends LitElement {
 
     .header {
       flex-shrink: 0;
-      inline-size: 10rem;
+      inline-size: 128px; /* icon 32px * 3 + padding 0.5rem * 2 + gap 0.5rem * 2 */
       display: flex;
       flex-wrap: wrap;
       align-content: flex-start;
@@ -76,6 +76,15 @@ export class MvrBoard extends LitElement {
     .header[aria-expanded='false'] {
       inline-size: 32px; /* FIXME */
       padding-inline: 0;
+      overflow-block: scroll;
+    }
+
+    sp-action-group {
+      flex-wrap: nowrap;
+    }
+
+    .header[aria-expanded='false'] sp-action-group {
+      flex-wrap: wrap;
     }
 
     .row h2 {
@@ -188,6 +197,9 @@ export class MvrBoard extends LitElement {
     }
 
     const rows = this.srcObject.items.length;
+    const headerStyle = styleMap({
+      blockSize: `calc(${this.srcObject?.preferences?.panelWidth} * 4 / 3)`,
+    });
     const panelStyle = styleMap({
       width: this.srcObject.preferences?.panelWidth,
     });
@@ -201,6 +213,7 @@ export class MvrBoard extends LitElement {
             <div
               class="header"
               aria-expanded="${this.rowHeaderExpanded ? 'true' : 'false'}"
+              style=${headerStyle}
             >
               <h2>
                 <input
