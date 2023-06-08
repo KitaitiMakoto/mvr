@@ -34,40 +34,12 @@ export class MvrApp extends LitElement {
       background-color: var(--spectrum-global-color-gray-100);
     }
 
-    #share-dialog {
-      inline-size: 80vw;
-      block-size: 80vh;
-      z-index: 12;
-    }
-
-    #share-dialog textarea {
-      inline-size: 100%;
-      block-size: 100%;
-    }
-
     sp-action-group {
       align-items: center;
     }
 
     mvr-board {
       background-color: var(--spectrum-global-color-gray-200);
-    }
-
-    .selected-panel {
-      position: fixed;
-      inline-size: 5rem;
-      z-index: 12;
-      inset-inline-end: 1rem;
-      inset-block-end: 1rem;
-      padding: 0.5rem;
-    }
-
-    /* FIXME */
-    dialog {
-      position: fixed;
-      inset-block-start: 50%;
-      transform: translateY(-50%);
-      height: 80vh;
     }
   `;
 
