@@ -1,6 +1,7 @@
-import { LitElement, PropertyValueMap, css, html } from 'lit';
+import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import { animate } from '@lit-labs/motion';
 
 import '@spectrum-web-components/action-group/sp-action-group.js';
@@ -57,7 +58,6 @@ export class MvrBoard extends LitElement {
       display: flex;
       flex-direction: var(--row-direction);
       padding-block: var(--padding);
-      block-size: calc(var(--panel-width, 10vw) * 4 / 3 + var(--padding) * 2);
     }
 
     .header {
@@ -67,7 +67,6 @@ export class MvrBoard extends LitElement {
       flex-wrap: wrap;
       align-content: flex-start;
       gap: 0.5rem;
-      block-size: calc(var(--panel-width, 10vw) * 4 / 3);
       border-inline-start: 1px solid rgb(200, 200, 200);
       padding: 0.5rem;
       transition: inline-size var(--spectrum-global-animation-duration-100);
@@ -118,7 +117,7 @@ export class MvrBoard extends LitElement {
 
     mv-panel {
       flex-shrink: 0;
-      inline-size: var(--panel-width, 10vw);
+      aspect-ratio: 3 / 4;
       background-color: var(--spectrum-global-color-gray-50);
     }
 
@@ -189,6 +188,9 @@ export class MvrBoard extends LitElement {
     }
 
     const rows = this.srcObject.items.length;
+    const panelStyle = styleMap({
+      width: this.srcObject.preferences?.panelWidth,
+    });
 
     return html`
       ${repeat(
@@ -259,6 +261,7 @@ export class MvrBoard extends LitElement {
                     @clickremove=${() => this.#handleRemove(i, j)}
                     @clickforward=${() => this.#handleForward(i, j)}
                     @clickback=${() => this.#handleBack(i, j)}
+                    style=${panelStyle}
                   >
                     <div class="panel-content">
                       ${src
@@ -314,17 +317,6 @@ export class MvrBoard extends LitElement {
         </sp-action-group>
       </div>
     `;
-  }
-
-  protected updated(
-    changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
-  ): void {
-    if (changedProperties.has('srcObject') && this.srcObject) {
-      this.style.setProperty(
-        '--panel-width',
-        this.srcObject.preferences?.panelWidth ?? '10vw'
-      );
-    }
   }
 
   goHome(i: number) {

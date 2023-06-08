@@ -22,6 +22,7 @@ export class MvPanel extends LitElement {
       block-size: 100%;
       position: relative;
       padding: var(--padding);
+      contain: content;
     }
 
     * {
