@@ -13,6 +13,9 @@ dependencies:
   '@spectrum-web-components/action-group':
     specifier: ^0.31.0
     version: 0.31.0
+  '@spectrum-web-components/button':
+    specifier: ^0.33.0
+    version: 0.33.0
   '@spectrum-web-components/field-label':
     specifier: ^0.31.0
     version: 0.31.0
@@ -2320,6 +2323,12 @@ packages:
       lit: 2.7.4
     dev: false
 
+  /@spectrum-web-components/base@0.33.0:
+    resolution: {integrity: sha512-XK4TsrjNpRvkY7EkzSB3Gu3J59CLAoVi318eSO1NOdxwAEX282WYZI6BY28hliJqch0WHcDZgAbxndfK8IkQuw==}
+    dependencies:
+      lit: 2.7.4
+    dev: false
+
   /@spectrum-web-components/button@0.31.0:
     resolution: {integrity: sha512-4jAx2+W33GjmB817wai+Ke/tj4qrq4k2viLVpzSuXhoXGv0QaHs9U7QWaxrWYsJeZFpjCt4G5CYCqOVGZ1OS3Q==}
     dependencies:
@@ -2331,16 +2340,39 @@ packages:
       '@spectrum-web-components/shared': 0.31.0
     dev: false
 
+  /@spectrum-web-components/button@0.33.0:
+    resolution: {integrity: sha512-ynYGJ2o+fXC07jhb6Mi7feJsGlXbHni5ueJLHjhbLpicb5L5NbG/Nac1HN9cKZq88rKlt46F8khPyoB4WhduPA==}
+    dependencies:
+      '@spectrum-web-components/base': 0.33.0
+      '@spectrum-web-components/clear-button': 0.33.0
+      '@spectrum-web-components/close-button': 0.33.0
+      '@spectrum-web-components/icon': 0.33.0
+      '@spectrum-web-components/icons-ui': 0.33.0
+      '@spectrum-web-components/shared': 0.33.0
+    dev: false
+
   /@spectrum-web-components/clear-button@0.31.0:
     resolution: {integrity: sha512-FilxHrlTYI4ImjrEdyA4XKp7NI8IrcuefUL60RmIqkmgN3bAt4UPRkkOYX/lbWA5hQVl7/nVk/MfZbxqLD6rOA==}
     dependencies:
       '@spectrum-web-components/base': 0.31.0
     dev: false
 
+  /@spectrum-web-components/clear-button@0.33.0:
+    resolution: {integrity: sha512-8/ufBu2q3g9F1N48r3e/CNz6FUeQ4qlamzoKo7iqB1CjNZ0kdEmuOkGTf6DMYSYJHq8tQmaEqvSB8ZYjZ31K4A==}
+    dependencies:
+      '@spectrum-web-components/base': 0.33.0
+    dev: false
+
   /@spectrum-web-components/close-button@0.31.0:
     resolution: {integrity: sha512-4UM9UeSkx3pbidmzzJUgNS252xa2tdbu4g84B+4oAAzCc0r2yBJOp0on+zuUktld/NBTQ/rGFGqSBkATTbvewA==}
     dependencies:
       '@spectrum-web-components/base': 0.31.0
+    dev: false
+
+  /@spectrum-web-components/close-button@0.33.0:
+    resolution: {integrity: sha512-z8gx9emoHrM7I4NCgF4afGtvJNqa+rZ5lxALPQid167HCivbOyHR2fSQSNEzghq9YM3kE4koG7Uyms7p+8Ns0g==}
+    dependencies:
+      '@spectrum-web-components/base': 0.33.0
     dev: false
 
   /@spectrum-web-components/field-label@0.31.0:
@@ -2367,12 +2399,27 @@ packages:
       '@spectrum-web-components/iconset': 0.31.0
     dev: false
 
+  /@spectrum-web-components/icon@0.33.0:
+    resolution: {integrity: sha512-H5JtnzFguDPfuNX4Ct4wojQKtz9FaMnGy/hq1PvA2RrtLAPn+sJn/j8HGrAXToPaAHY+Q42WSRBqtfCy6PEUnA==}
+    dependencies:
+      '@spectrum-web-components/base': 0.33.0
+      '@spectrum-web-components/iconset': 0.33.0
+    dev: false
+
   /@spectrum-web-components/icons-ui@0.31.0:
     resolution: {integrity: sha512-aZgXGC/sa4NzPKv+qFmKfdlFoj3Xd32epiNqnDAFpm6au1cp5fspdNss5gI9U74Lg6Ty5EooBV19YKd7J/AEBA==}
     dependencies:
       '@spectrum-web-components/base': 0.31.0
       '@spectrum-web-components/icon': 0.31.0
       '@spectrum-web-components/iconset': 0.31.0
+    dev: false
+
+  /@spectrum-web-components/icons-ui@0.33.0:
+    resolution: {integrity: sha512-iwgB/NZDGAFyjoBF1tg0/XIg60GnzEbuxGic3bHbGbrH7LgK7M6nurUbwmbLuQkAq/uO9rbpS2abslFwwicV1A==}
+    dependencies:
+      '@spectrum-web-components/base': 0.33.0
+      '@spectrum-web-components/icon': 0.33.0
+      '@spectrum-web-components/iconset': 0.33.0
     dev: false
 
   /@spectrum-web-components/icons-workflow@0.31.0:
@@ -2386,6 +2433,12 @@ packages:
     resolution: {integrity: sha512-UwAljLZW+oYILpQuyf55XxEJUHkuXK6l5/XveWbNoVsf+yQ/SYyC2BT0KOzPTJnFgUZY5CSWkABshDQ4t942mA==}
     dependencies:
       '@spectrum-web-components/base': 0.31.0
+    dev: false
+
+  /@spectrum-web-components/iconset@0.33.0:
+    resolution: {integrity: sha512-jaifk5/kX796d0d1/KlV+zAeimgac9yFjmEKMDEgvWOYGUIJaU1G85QBPwYXWBX8uJyHnWmftrjvSLi3moVgtA==}
+    dependencies:
+      '@spectrum-web-components/base': 0.33.0
     dev: false
 
   /@spectrum-web-components/number-field@0.31.0:
@@ -2435,6 +2488,14 @@ packages:
     dependencies:
       '@lit-labs/observers': 2.0.0
       '@spectrum-web-components/base': 0.31.0
+      focus-visible: 5.2.0
+    dev: false
+
+  /@spectrum-web-components/shared@0.33.0:
+    resolution: {integrity: sha512-/62ixrNCNkMML0bEuHUjDQOUYkLE/yLgmqczMb+FI+2MyJJDXqqNiVxlAP1WChKEuNJwulpFTMKeZ9cKBFfH0w==}
+    dependencies:
+      '@lit-labs/observers': 2.0.0
+      '@spectrum-web-components/base': 0.33.0
       focus-visible: 5.2.0
     dev: false
 
