@@ -30,8 +30,12 @@ export class MvAssets extends LitElement {
   static styles = [
     css`
       :host {
-        display: block;
+        display: none;
         position: relative;
+      }
+
+      :host([open]) {
+        display: block;
       }
 
       h2 {
