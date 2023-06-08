@@ -128,25 +128,11 @@ export class MvrApp extends LitElement {
                   ></sp-slider>
                 </sp-action-group>
                 <sp-action-group>
-                  <sp-action-button @click=${this.#handleShare}>
-                    <sp-icon-share slot="icon"></sp-icon-share>共有
-                  </sp-action-button>
-                </sp-action-group>
-                <sp-action-group>
                   <sp-action-button @click=${this.#handleToggleRowHeader}>
                     ${this._rowHeaderExpanded ? '縮小' : '拡大'}
                   </sp-action-button>
                 </sp-action-group>
               </div>
-              <dialog id="share-dialog">
-                <textarea
-                  .value=${JSON.stringify(
-                    this.srcObject ?? '',
-                    undefined,
-                    '  '
-                  )}
-                ></textarea>
-              </dialog>
             `
           : undefined}
         <mvr-board
@@ -297,11 +283,6 @@ export class MvrApp extends LitElement {
       ...board,
       items: [...board.items.slice(0, index), ...board.items.slice(index + 1)],
     };
-  }
-
-  #handleShare() {
-    this._$shareDialog.open = !this._$shareDialog.open;
-    this.requestUpdate();
   }
 
   #handleDuplicate(event: CustomEvent) {
